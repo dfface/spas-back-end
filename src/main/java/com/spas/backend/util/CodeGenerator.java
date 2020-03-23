@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -54,12 +53,13 @@ public class CodeGenerator {
     gc.setAuthor("Yuhan Liu");
     gc.setOpen(false);
     gc.setSwagger2(true);  // 实体属性 Swagger2 注解
+    gc.setServiceName("%sService");  // 改变 Service 名称
     mpg.setGlobalConfig(gc);
 
     // 数据源配置
     DataSourceConfig dsc = new DataSourceConfig();
     dsc.setUrl("jdbc:mysql://192.168.122.7:3306/"
-        + "ant?useUnicode=true&useSSL=false&characterEncoding=utf8");
+        + "spas?useUnicode=true&useSSL=false&characterEncoding=utf8");
     // dsc.setSchemaName("public");
     dsc.setDriverName("com.mysql.cj.jdbc.Driver");
     dsc.setUsername("spas");
@@ -71,7 +71,6 @@ public class CodeGenerator {
     // pc.setModuleName(scanner("模块名"));
     pc.setParent("com.spas.backend");
     mpg.setPackageInfo(pc);
-
     // 自定义配置
     InjectionConfig cfg = new InjectionConfig() {
         @Override
@@ -93,8 +92,8 @@ public class CodeGenerator {
         @Override
         public String outputFile(TableInfo tableInfo) {
             // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-            return projectPath + "/src/main/resources/mapping/" + pc.getModuleName()
-                    + "/" + tableInfo.getEntityName() + "Mapping" + StringPool.DOT_XML;
+            return projectPath + "/src/main/resources/mapping/" // + pc.getModuleName() + "/"
+                + tableInfo.getEntityName() + "Mapping" + StringPool.DOT_XML;
         }
     });
     /*
@@ -133,11 +132,13 @@ public class CodeGenerator {
     // strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
     // 写于父类中的公共字段
     // strategy.setSuperEntityColumns("id");
-     strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
+    // strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
+    String[] myTableNames = {"case","comment","department","menu","office","operation","plan","plan_report","report","role","role_menu","role_operation","suggestion","user"};
+    strategy.setInclude(myTableNames);
     strategy.setControllerMappingHyphenStyle(true);
-    strategy.setTablePrefix(pc.getModuleName() + "_");
+    // strategy.setTablePrefix(pc.getModuleName() + "_");
     mpg.setStrategy(strategy);
-    mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+    // mpg.setTemplateEngine(new FreemarkerTemplateEngine());
     mpg.execute();
   }
 
