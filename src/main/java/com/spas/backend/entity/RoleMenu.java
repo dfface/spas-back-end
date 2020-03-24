@@ -1,7 +1,9 @@
 package com.spas.backend.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModel;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -33,8 +35,10 @@ public class RoleMenu implements Serializable {
 
   private LocalDateTime createTime;
 
+  @TableField(update = "now()")
   private LocalDateTime updateTime;
 
+  @TableLogic(value = "b'0'", delval = "b'1'")
   private Boolean isDeleted;
 
   private String officeId;

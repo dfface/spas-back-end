@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -14,35 +13,27 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 检察建议实体.
+ *   关系：用户-案件.
  * </p>
  *
  * @author Yuhan Liu
- * @since 2020-03-23
+ * @since 2020-03-24
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "Suggestion对象", description = "检察建议")
-public class Suggestion implements Serializable {
+@ApiModel(value = "UserCase对象", description = "用户-案件")
+public class UserCase implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  public static final long serialVersionUID = 1L;
 
-  @TableId(type = IdType.ASSIGN_UUID)
-  private String id;
+  @TableId(type = IdType.INPUT)
+  private String useId;
 
-  @ApiModelProperty(value = "被监督对象")
-  private String supervisedName;
+  @TableId(type = IdType.INPUT)
+  private String casId;
 
-  @ApiModelProperty(value = "内容")
-  private String content;
-
-  @ApiModelProperty(value = "回复时间范围")
-  private String timeRange;
-
-  private Integer state;
-
-  private Float score;
+  private LocalDateTime associateTime;
 
   private LocalDateTime createTime;
 
@@ -52,10 +43,5 @@ public class Suggestion implements Serializable {
   @TableLogic(value = "b'0'", delval = "b'1'")
   private Boolean isDeleted;
 
-  private String caseId;
-
-  private String creatorId;
-
   private String officeId;
-
 }
