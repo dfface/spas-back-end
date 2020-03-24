@@ -1,16 +1,17 @@
 package com.spas.backend.entity;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ * 关联：角色-菜单项.
  * </p>
  *
  * @author Yuhan Liu
@@ -19,22 +20,24 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="RoleMenu对象", description="")
+@ApiModel(value = "RoleMenu对象", description = "角色-菜单项")
 public class RoleMenu implements Serializable {
 
-    private static final long serialVersionUID=1L;
+  private static final long serialVersionUID = 1L;
 
-    private String menId;
+  @TableId(value = "men_id", type = IdType.INPUT)
+  private String menId;
 
-    private String rolId;
+  @TableId(value = "rol_id", type = IdType.INPUT)
+  private String rolId;
 
-    private LocalDateTime createTime;
+  private LocalDateTime createTime;
 
-    private LocalDateTime updateTime;
+  private LocalDateTime updateTime;
 
-    private Boolean isDeleted;
+  private Boolean isDeleted;
 
-    private String officeId;
+  private String officeId;
 
 
 }

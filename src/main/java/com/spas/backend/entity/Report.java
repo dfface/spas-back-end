@@ -1,16 +1,18 @@
 package com.spas.backend.entity;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ * 整改报告实体.
  * </p>
  *
  * @author Yuhan Liu
@@ -19,33 +21,33 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="Report对象", description="")
+@ApiModel(value = "Report对象", description = "整改报告")
 public class Report implements Serializable {
 
-    private static final long serialVersionUID=1L;
+  private static final long serialVersionUID = 1L;
 
-    private String id;
+  @TableId(type = IdType.ASSIGN_UUID)
+  private String id;
 
-    @ApiModelProperty(value = "内容")
-    private String content;
+  @ApiModelProperty(value = "内容")
+  private String content;
 
-    @ApiModelProperty(value = "针对内容评价")
-    private String judge;
+  @ApiModelProperty(value = "针对内容评价")
+  private String judge;
 
-    @ApiModelProperty(value = "针对内容评分")
-    private String score;
+  @ApiModelProperty(value = "针对内容评分")
+  private String score;
 
-    private Integer state;
+  private Integer state;
 
-    private LocalDateTime createTime;
+  private LocalDateTime createTime;
 
-    private LocalDateTime updateTime;
+  private LocalDateTime updateTime;
 
-    private Boolean isDeleted;
+  private Boolean isDeleted;
 
-    private String creatorId;
+  private String creatorId;
 
-    private String officeId;
-
+  private String officeId;
 
 }

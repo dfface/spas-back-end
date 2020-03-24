@@ -1,16 +1,17 @@
 package com.spas.backend.entity;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ * 评论实体.
  * </p>
  *
  * @author Yuhan Liu
@@ -19,28 +20,29 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="Comment对象", description="")
+@ApiModel(value = "Comment对象", description = "评论/回复")
 public class Comment implements Serializable {
 
-    private static final long serialVersionUID=1L;
+  private static final long serialVersionUID = 1L;
 
-    private String id;
+  @TableId(type = IdType.ASSIGN_UUID)
+  private String id;
 
-    private Integer type;
+  private Integer type;
 
-    private String content;
+  private String content;
 
-    private LocalDateTime createTime;
+  private LocalDateTime createTime;
 
-    private LocalDateTime updateTime;
+  private LocalDateTime updateTime;
 
-    private Boolean isDeleted;
+  private Boolean isDeleted;
 
-    private String caseId;
+  private String caseId;
 
-    private String creatorId;
+  private String creatorId;
 
-    private String officeId;
+  private String officeId;
 
 
 }

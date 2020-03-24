@@ -1,16 +1,17 @@
 package com.spas.backend.entity;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ * 整改计划实体.
  * </p>
  *
  * @author Yuhan Liu
@@ -19,34 +20,34 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="Plan对象", description="")
+@ApiModel(value = "Plan对象", description = "整改计划")
 public class Plan implements Serializable {
 
-    private static final long serialVersionUID=1L;
+  private static final long serialVersionUID = 1L;
 
-    private String id;
+  @TableId(type = IdType.ASSIGN_UUID)
+  private String id;
 
-    private String content;
+  private String content;
 
-    private Integer state;
+  private Integer state;
 
-    private String comment;
+  private String comment;
 
-    private String score;
+  private String score;
 
-    private Float finalScore;
+  private Float finalScore;
 
-    private LocalDateTime createTime;
+  private LocalDateTime createTime;
 
-    private LocalDateTime updateTime;
+  private LocalDateTime updateTime;
 
-    private Boolean isDeleted;
+  private Boolean isDeleted;
 
-    private String creatorId;
+  private String creatorId;
 
-    private String caseId;
+  private String caseId;
 
-    private String officeId;
-
+  private String officeId;
 
 }
