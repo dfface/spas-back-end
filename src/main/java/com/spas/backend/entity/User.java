@@ -46,9 +46,6 @@ public class User implements Serializable {
 
   private String avatar;
 
-  @ApiModelProperty(value = "类型")
-  private Integer type;
-
   private LocalDateTime createTime;
 
   @TableField(update = "now()")
