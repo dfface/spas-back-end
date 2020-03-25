@@ -17,6 +17,7 @@ configurations {
 repositories {
     maven { url "https://maven.aliyun.com/repository/central" }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    mavenCentral()
 }
 
 dependencies {
@@ -30,8 +31,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2'  // mybatis
     implementation 'org.springframework.session:spring-session-data-redis'
-    compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
+    compileOnly('org.projectlombok:lombok')
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -44,6 +45,13 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.9.2' //swagger2-ui
     implementation 'com.alibaba:druid-spring-boot-starter:1.1.20'  // Druid
     implementation 'junit:junit:4.12'
+    implementation 'org.apache.shiro:shiro-spring-boot-web-starter:1.5.2'  // Shiro web
+    compile('org.slf4j:slf4j-api:1.7.30')  // slf4j-api
+//    compile 'org.slf4j:slf4j-log4j12:1.7.30'  // spring boot 自带 logback
+
+//    compile('org.apache.logging.log4j:log4j-slf4j-impl:2.13.1')  // log4j for slf4j
+    compile('org.modelmapper:modelmapper:2.3.6')
+    runtime('org.springframework.boot:spring-boot-devtools')
 }
 
 test {

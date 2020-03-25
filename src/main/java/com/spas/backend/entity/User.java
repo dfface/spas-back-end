@@ -33,6 +33,10 @@ public class User implements Serializable {
 
   private String name;
 
+  private String salt;
+
+  private String password;
+
   @ApiModelProperty(value = "职务")
   private String position;
 

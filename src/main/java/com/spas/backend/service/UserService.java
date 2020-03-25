@@ -1,5 +1,7 @@
 package com.spas.backend.service;
 
+import com.spas.backend.common.ApiResponse;
+import com.spas.backend.dto.UserDto;
 import com.spas.backend.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +15,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserService extends IService<User> {
 
+  public ApiResponse insertUser(UserDto userDto);
+
+  public ApiResponse selectUser(String email);
 }

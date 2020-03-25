@@ -1,6 +1,7 @@
 package com.spas.backend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.spas.backend.common.ApiResponse;
 import com.spas.backend.entity.UserRole;
 
 /**
@@ -13,4 +14,5 @@ import com.spas.backend.entity.UserRole;
  */
 public interface UserRoleService extends IService<UserRole> {
 
+  public ApiResponse selectRoles(String useId);
 }
