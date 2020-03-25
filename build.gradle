@@ -51,7 +51,8 @@ dependencies {
 
 //    compile('org.apache.logging.log4j:log4j-slf4j-impl:2.13.1')  // log4j for slf4j
     compile('org.modelmapper:modelmapper:2.3.6')
-    runtime('org.springframework.boot:spring-boot-devtools')
+    runtime('org.springframework.boot:spring-boot-devtools')  // hot deploy
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf') // Thymeleaf
 }
 
 test {
