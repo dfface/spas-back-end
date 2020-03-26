@@ -53,6 +53,7 @@ dependencies {
     compile('org.modelmapper:modelmapper:2.3.6')
     runtime('org.springframework.boot:spring-boot-devtools')  // hot deploy
     compile('org.springframework.boot:spring-boot-starter-thymeleaf') // Thymeleaf
+    implementation 'com.auth0:java-jwt:3.10.1'  // auth0 JWT
 }
 
 test {

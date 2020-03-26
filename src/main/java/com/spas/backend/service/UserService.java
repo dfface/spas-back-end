@@ -17,5 +17,5 @@ public interface UserService extends IService<User> {
 
   public ApiResponse insertUser(UserDto userDto);
 
-  public ApiResponse selectUser(String email);
+  public UserDto selectUser(String email);
 }

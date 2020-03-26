@@ -2,17 +2,18 @@ package com.spas.backend;
 
 import com.spas.backend.entity.UserRole;
 import com.spas.backend.service.UserRoleService;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @SpringBootTest
-@Slf4j
 public class UserRoleTests {
 
+  private static final Logger log = LoggerFactory.getLogger(UserRoleTests.class);
   @Resource
   UserRoleService userRoleService;
 

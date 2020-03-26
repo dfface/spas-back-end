@@ -1,5 +1,6 @@
 package com.spas.backend.mapper;
 
+import com.spas.backend.dto.UserDto;
 import com.spas.backend.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -12,5 +13,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-03-23
  */
 public interface UserMapper extends BaseMapper<User> {
-  public User selectUserByEmail(String email);
+  public UserDto selectUserByEmail(String email);
+  public UserDto selectUserById(String id);
 }

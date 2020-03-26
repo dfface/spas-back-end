@@ -38,20 +38,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
   @Override
   public ApiResponse insertUser(UserDto userDto) {
-    Map<String,String> map = new PasswordHelper().hashPassword(userDto.getPassword());
+    Map<String,String> map = new PasswordHelper().createPassword(userDto.getPassword());
     User user = new User();
     modelMapper.map(userDto, user);
     user.setPassword(map.get("password"));
     user.setSalt(map.get("salt"));
     userMapper.insert(user);
-    return new ApiResponse(null);
+    return new ApiResponse();
   }
 
   @Override
-  public ApiResponse selectUser(String email) {
-    User user = userMapper.selectUserByEmail(email);
-    UserDto userDto = new UserDto();
-    modelMapper.map(user,userDto);
-    return new ApiResponse(userDto);
+  public UserDto selectUser(String email) {
+    return userMapper.selectUserByEmail(email);
   }
 }

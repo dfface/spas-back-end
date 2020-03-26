@@ -1,8 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spas.backend.mapper.UserMapper">
-    <select id="selectUserByEmail" resultType="User">
-        SELECT u.id, u.name, u.salt, u.password, u.position, u.email, u.phone, u.office_id, u.department_id, u.avatar
-        FROM user as u WHERE email = #{email} AND is_deleted = b'0'
+    <resultMap id="UserDtoResultMap" type="com.spas.backend.dto.UserDto">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="salt" column="salt"/>
+        <result property="password" column="password"/>
+        <result property="position" column="position"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="officeId" column="office_id"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="avatar" column="avatar"/>
+        <collection property="roles" ofType="String">
+            <id column="role"/>
+        </collection>
+        <collection property="permissions" ofType="String">
+            <id column="permission" />
+        </collection>
+    </resultMap>
+    <select id="selectUserByEmail" resultMap="UserDtoResultMap">
+        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.phone,u.office_id,u.department_id,u.avatar
+             , r.`code` AS role, o.`code` AS permission
+        FROM `user` AS u
+                 INNER JOIN user_role AS ur
+                            ON u.id = ur.use_id
+                 LEFT JOIN role AS r
+                           ON ur.rol_id = r.id
+                 LEFT JOIN role_operation ro
+                           ON r.id = ro.rol_id
+                 LEFT JOIN operation o
+                           ON ro.ope_id = o.id
+        WHERE u.email = #{email}
+            AND u.is_deleted = b'0' OR u.is_deleted = null
+            AND ur.is_deleted = b'0' OR ur.is_deleted = null
+            AND r.is_deleted = b'0' OR r.is_deleted = null
+            AND ro.is_deleted = b'0' OR ro.is_deleted = null
+            AND o.is_deleted = b'0' OR o.is_deleted = null
+    </select>
+    <select id="selectUserById" resultMap="UserDtoResultMap">
+        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.phone,u.office_id,u.department_id,u.avatar
+             , r.`code` AS role, o.`code` AS permission
+        FROM `user` AS u
+                 INNER JOIN user_role AS ur
+                            ON u.id = ur.use_id
+                 LEFT JOIN role AS r
+                           ON ur.rol_id = r.id
+                 LEFT JOIN role_operation ro
+                           ON r.id = ro.rol_id
+                 LEFT JOIN operation o
+                           ON ro.ope_id = o.id
+        WHERE u.id = #{id}
+            AND u.is_deleted = b'0' OR u.is_deleted = null
+            AND ur.is_deleted = b'0' OR ur.is_deleted = null
+            AND r.is_deleted = b'0' OR r.is_deleted = null
+            AND ro.is_deleted = b'0' OR ro.is_deleted = null
+            AND o.is_deleted = b'0' OR o.is_deleted = null
     </select>
 </mapper>

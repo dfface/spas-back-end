@@ -30,7 +30,7 @@ public class Operation implements Serializable {
   @TableId(type = IdType.ASSIGN_UUID)
   private String id;
 
-  private String name;
+  private String code;
 
   private String description;
 

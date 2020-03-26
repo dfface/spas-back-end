@@ -3,8 +3,10 @@ package com.spas.backend.controller;
 
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
+import com.spas.backend.common.exception.CustomException;
 import com.spas.backend.dto.UserDto;
 import com.spas.backend.service.UserService;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,13 +34,21 @@ public class UserController {
     return userService.insertUser(userDto);
   }
 
-  @GetMapping("/{email}")
+  @GetMapping("/{email}/")
+  @RequiresRoles("chief_procurator")
   public ApiResponse get(@PathVariable String email) {
     try {
-      return userService.selectUser(email);
+      return new ApiResponse(userService.selectUser(email));
     } catch (IllegalArgumentException e) {
       return new ApiResponse(ApiCode.IllegalArgument, "邮箱未注册！");
+    } catch (Exception e) {
+      return new ApiResponse(ApiCode.IllegalArgument, "邮箱未注册！");
     }
+  }
+
+  @GetMapping("/test")
+  public ApiResponse test() {
+    return new ApiResponse();
   }
 }
 
