@@ -16,7 +16,7 @@ public class RedisTests {
   @Autowired
   private StringRedisTemplate redisTemplate;
 
-  @Test
+//  @Test
   public void testHashOps() {
     System.out.println(redisTemplate.toString());
     HashOperations<String,String,String> ops = redisTemplate.opsForHash();

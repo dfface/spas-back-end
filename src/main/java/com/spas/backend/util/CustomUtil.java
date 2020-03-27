@@ -1,5 +1,6 @@
 package com.spas.backend.util;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.common.exception.CustomException;
@@ -23,8 +24,10 @@ public class CustomUtil {
     httpServletResponse.setContentType("application/json; charset=utf-8");
     // PrintWriter 字符流，而 OutputStream 字节流
     try (PrintWriter out = httpServletResponse.getWriter()) {
-      // Jackson  Object 转 JSON
-      String data = new ObjectMapper().writeValueAsString(apiResponse);
+//      // Jackson  Object 转 JSON
+//      String data = new ObjectMapper().writeValueAsString(apiResponse);
+      // fastjson
+      String data = JSON.toJSONString(apiResponse);
       out.append(data);
     } catch (IOException io) {
       log.error("返回ApiResponse时产生异常：" + io.getMessage());

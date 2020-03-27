@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 
-@SpringBootTest
+//@SpringBootTest
 class BackEndApplicationTests {
 
   @Autowired
@@ -38,11 +38,11 @@ class BackEndApplicationTests {
   @Autowired
   UserRoleMapper userRoleMapper;
 
-  @Test
+//  @Test
   void contextLoads() {
   }
 
-  @Test
+//  @Test
   void addUser() {
     User user = new User();
     user.setName("李四");
@@ -58,7 +58,7 @@ class BackEndApplicationTests {
     userService.insertUser(userDto);
   }
 
-  @Test
+//  @Test
   void addOffice() {
     Office office = new Office();
     office.setName("内江市人民检察院");
@@ -70,7 +70,7 @@ class BackEndApplicationTests {
     System.out.println("id:" + office.getId());
   }
 
-  @Test
+//  @Test
   void addDepartment() {
     Department department = new Department();
     department.setName("被监督机关");
@@ -79,7 +79,7 @@ class BackEndApplicationTests {
     System.out.println("id:" + department.getId());
   }
 
-  @Test
+//  @Test
   void addRole() {
     Role role = new Role();
     role.setCode("administrative_personnel");
@@ -89,7 +89,7 @@ class BackEndApplicationTests {
     System.out.println("id:" + role.getId());
   }
 
-  @Test
+//  @Test
   void addUserRole() {
     UserRole userRole = new UserRole();
     userRole.setUseId("b7a894040681bc2c56c48cea3a5a7ab4");
@@ -98,7 +98,7 @@ class BackEndApplicationTests {
     userRoleMapper.insert(userRole);
   }
 
-  @Test
+//  @Test
   void addOperation() {
     Operation operation = new Operation();
     operation.setCode("user:addByDto");
@@ -107,7 +107,7 @@ class BackEndApplicationTests {
     operationMapper.insert(operation);
   }
 
-  @Test
+//  @Test
   void addRoleOperation() {
     RoleOperation roleOperation = new RoleOperation();
     roleOperation.setRolId("da05fed3b0626305edc8368527e071ca");

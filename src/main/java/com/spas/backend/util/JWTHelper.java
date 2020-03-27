@@ -3,10 +3,9 @@ package com.spas.backend.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.spas.backend.common.ApiCode;
 import com.spas.backend.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,29 +30,27 @@ public class JWTHelper {
   // 过期时间 2分钟
 //  private static final long EXPIRE_TIME = 2*60*1000;
 
-  private StringRedisTemplate redisTemplate;
-
-  @Autowired
-  public void setRedisTemplate(StringRedisTemplate redisTemplate) {
-    this.redisTemplate = redisTemplate;
-  }
-
   /**
    * 校验 token 是否有效.
    * @param token 令牌
    * @param secret 秘密
    * @return 正确与否
    */
-  public static boolean verify(String secret, String token) {
+  public static ApiCode verify(String secret, String token) {
     try {
       Algorithm algorithm = Algorithm.HMAC256(secret);
       JWTVerifier verifier = JWT.require(algorithm)
           .build(); //Reusable verifier instance
       DecodedJWT jwt = verifier.verify(token);  // 当验证令牌时，时间验证自动发生，当值无效时抛出JWTVerificationException。如果前面的字段中有任何一个丢失，则不会在此验证中考虑它们。
-      return true;
-    } catch (JWTVerificationException exception){
-      //Invalid signature/claims
-      return false;
+      return ApiCode.OK;
+    } catch (AlgorithmMismatchException e){
+      return ApiCode.ALGORITHM_MISMATCH;
+    } catch (SignatureVerificationException e){
+      return ApiCode.SIGNATURE_INVALID;
+    } catch (TokenExpiredException e){
+      return ApiCode.TOKEN_EXPIRED;
+    } catch (InvalidClaimException e){
+      return ApiCode.CLAIM_INVALID;
     }
   }
 
@@ -111,18 +108,13 @@ public class JWTHelper {
     try {
       Date date = new Date(System.currentTimeMillis() + expire * 60 * 1000);
       Algorithm algorithm = Algorithm.HMAC256(secret);
-      String refreshToken =  JWT.create()
+      return JWT.create()
           .withKeyId(id)
           .withIssuer("http://www.spas.com/")
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
           .sign(algorithm);
-      // 将 RefreshToken 存储到 Redis 中
-      ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
-      Assert.notNull(refreshToken,"令牌不能为空");
-      valueOperations.set(id,refreshToken,expire, TimeUnit.MINUTES);
-      return refreshToken;
     } catch (JWTCreationException e) {
       return null;
     }
@@ -172,10 +164,6 @@ public class JWTHelper {
     token.put("accessToken",accessToken);
     token.put("refreshToken",refreshToken);
     token.put("idToken",idToken);
-    // 将 RefreshToken 存储到 Redis 中
-    ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
-    Assert.notNull(refreshToken,"令牌不能为空");
-    valueOperations.set(userDto.getId(),refreshToken,expire.get("refreshExpire"), TimeUnit.MINUTES);
     return token;
   }
 }

@@ -30,7 +30,7 @@ public class UserTests {
 
   }
 
-  @Test
+//  @Test
   void updateUser() {
     // 使用 条件构造器
 //    User user = selectUserByEmail();
@@ -44,7 +44,7 @@ public class UserTests {
 //    log.info(String.valueOf(update));
   }
 
-  @Test
+//  @Test
   void selectUser() {
     UserDto userDto = userMapper.selectUserByEmail("handy1998@qq.com");
     System.out.println(userDto);

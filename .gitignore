@@ -32,4 +32,4 @@ out/
 .vscode/
 
 ### user define ###
-./spas-back-end.log
+logs/

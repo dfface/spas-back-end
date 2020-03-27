@@ -2,6 +2,7 @@ package com.spas.backend.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,14 +23,14 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(IllegalArgumentException.class)
   public ApiResponse IllegalArgumentExceptionHandler(IllegalArgumentException e) {
-    return new ApiResponse(ApiCode.IllegalArgument,e.getMessage());
+    return new ApiResponse(ApiCode.ILLEGAL_ARGUMENT,e.getMessage());
   }
 
   /**
    * 空指针异常.
    */
   @ExceptionHandler(NullPointerException.class)
-  public ApiResponse NullPointerExceptionHandler(NullPointerException e) {
+  public ApiResponse NullPointerExceptionHandler() {
     return new ApiResponse(ApiCode.NullPointer);
   }
 
@@ -40,5 +41,14 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ApiResponse IncorrectCredentialsExceptionHandler(IncorrectCredentialsException e) {
     return new ApiResponse(ApiCode.IncorrectCredentials);
+  }
+
+  /**
+   * 没有权限访问.
+   */
+  @ExceptionHandler(AuthorizationException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ApiResponse AuthorizationExceptionHandler(AuthorizationException e) {
+    return new ApiResponse(ApiCode.UNAUTHORIZED);
   }
 }

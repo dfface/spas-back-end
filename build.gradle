@@ -54,6 +54,7 @@ dependencies {
     runtime('org.springframework.boot:spring-boot-devtools')  // hot deploy
     compile('org.springframework.boot:spring-boot-starter-thymeleaf') // Thymeleaf
     implementation 'com.auth0:java-jwt:3.10.1'  // auth0 JWT
+    compile 'com.alibaba:fastjson:1.2.61'  // fastjson
 }
 
 test {

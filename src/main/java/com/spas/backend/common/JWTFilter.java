@@ -3,6 +3,7 @@ package com.spas.backend.common;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.spas.backend.common.exception.JWTException;
 import com.spas.backend.util.CustomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -37,6 +38,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
    */
   @Override
   protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+    log.info("在处理之前");
     // HttpServletRequest对象代表客户端的请求，当客户端通过HTTP协议访问服务器时，HTTP请求头中的所有信息都封装在这个对象中
     HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
     // 这个对象中封装了向客户端发送数据、发送响应头，发送响应状态码的方法。
@@ -49,6 +51,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     log.debug("Access-Control-Request-Headers: " + httpServletRequest.getHeader("Access-Control-Request-Headers"));
     // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
     if(httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
+      log.info("收到options请求");
       httpServletResponse.setStatus(HttpStatus.OK.value());
       return false;
     }
@@ -62,6 +65,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
    */
   @Override
   protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+    log.info("当访问被拒绝");
     this.sendChallenge(request, response);
     return false;
   }
@@ -77,6 +81,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
   protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
 //    HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
 //    String authorization = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
+    log.info("是否要校验JWT："+ (getAuthzHeader(request) != null));
     return getAuthzHeader(request) != null;
   }
 
@@ -95,8 +100,10 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
     JWTToken token = new JWTToken(getAuthzHeader(request));
     // 提交给 realm 进行登录
+    log.info("执行登录：提交给 realm 进行登录");
     getSubject(request, response).login(token);
     // 没有抛出异常则返回 true
+    log.info("登录成功");
     return true;
   }
 
@@ -117,29 +124,29 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
   protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
     log.info("是否允许访问");
     if (isLoginAttempt(request, response)) {
+      log.info("有Authorization字段");
       // 有 Authorization 字段
       try {
         executeLogin(request, response);
-      } catch (Exception e) {
+      } catch (JWTException e){
+        log.error("JWT异常");
+      }
+      catch (Exception e) {
         // 认证出现异常，传递错误信息
         String msg = e.getMessage();
         // 获取具体的异常
         Throwable throwable = e.getCause();
-        // 判断异常类型
-        if (throwable instanceof SignatureVerificationException) {
-          // JWT token 认证失败
-          msg = "访问令牌无效！" + throwable.getMessage();
-        } else if (throwable instanceof TokenExpiredException) {
-          // JWT token 过期
-          // 将直接返回错误信息，让前端重新获取
-          log.error(ApiCode.ACCESS_TOKEN_EXPIRED.getMsg());
-          CustomUtil.sendApiResponse(response,HttpStatus.UNAUTHORIZED,new ApiResponse(ApiCode.ACCESS_TOKEN_EXPIRED,"令牌过期！"));
-        } else if (throwable != null) {
-          msg = throwable.getMessage();
+        try {
+          throw throwable;
+        } catch (JWTException jwtEx) {
+          log.info("JWTException 校验失败："+jwtEx.getApiCode().getMsg());
+          CustomUtil.sendApiResponse(response, HttpStatus.UNAUTHORIZED, new ApiResponse(jwtEx.getApiCode()));
+        } catch (IllegalArgumentException illEx) {
+          log.info("IllegalArgumentException 校验失败："+illEx.getMessage());
+          CustomUtil.sendApiResponse(response, HttpStatus.UNAUTHORIZED, new ApiResponse(ApiCode.ILLEGAL_ARGUMENT));
+        } catch (Throwable thEx) {
+          log.info("Throwable 校验失败："+thEx.getMessage());
         }
-        // 认证失败
-        log.error(ApiCode.UNAUTHORIZED.getMsg());
-        CustomUtil.sendApiResponse(response,HttpStatus.UNAUTHORIZED,new ApiResponse(ApiCode.UNAUTHORIZED,"认证失败：" + msg));
         return false;
       }
       return true;
@@ -147,15 +154,14 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     // 之前：没有携带 Token 也让过，目的就是让他能访问一些东西，如果不让过，怎么弄？
     // 现在：没有携带 Token 不通过，否则报错
     else {
+      HttpServletRequest httpServletRequest = WebUtils.getHttpRequest(request);
+      log.info("请求地址：" + httpServletRequest);
       log.info(ApiCode.UNAUTHORIZED.getMsg() + " 没有 Token");
       // 是否任何请求必须登录
-      final Boolean mustLoginFlag = false;
-      if(mustLoginFlag) {
-        // 发送了这个响应，就不能再发送URL请求的响应了
-        CustomUtil.sendApiResponse(response,HttpStatus.UNAUTHORIZED,new ApiResponse(ApiCode.UNAUTHORIZED,"没有令牌！"));
-        return false;
-      }
+      final Boolean mustLoginFlag = true;
+      // 发送了这个响应，就不能再发送URL请求的响应了
+      CustomUtil.sendApiResponse(response,HttpStatus.UNAUTHORIZED,new ApiResponse(ApiCode.UNAUTHORIZED,"没有令牌！"));
+      return false;
     }
-    return true;
   }
 }

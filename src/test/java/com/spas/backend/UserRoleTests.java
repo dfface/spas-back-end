@@ -17,7 +17,7 @@ public class UserRoleTests {
   @Resource
   UserRoleService userRoleService;
 
-  @Test
+//  @Test
   void findRoles() {
     log.info(userRoleService.selectRoles("6bf8719eec5bec13aa61d6eacdd74818").toString());
   }

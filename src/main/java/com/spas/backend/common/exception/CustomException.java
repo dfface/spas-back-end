@@ -9,8 +9,13 @@ import lombok.NoArgsConstructor;
  * @author Yuhan Liu
  * @since 2020-03-26
  */
-@AllArgsConstructor
-@NoArgsConstructor
 public class CustomException extends RuntimeException {
-  private String msg;
+
+  public CustomException(){
+    super();
+  }
+
+  public CustomException(String msg){
+    super(msg);
+  }
 }

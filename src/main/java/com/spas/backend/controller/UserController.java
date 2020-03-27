@@ -39,10 +39,8 @@ public class UserController {
   public ApiResponse get(@PathVariable String email) {
     try {
       return new ApiResponse(userService.selectUser(email));
-    } catch (IllegalArgumentException e) {
-      return new ApiResponse(ApiCode.IllegalArgument, "邮箱未注册！");
     } catch (Exception e) {
-      return new ApiResponse(ApiCode.IllegalArgument, "邮箱未注册！");
+      return new ApiResponse(ApiCode.ILLEGAL_ARGUMENT, "邮箱未注册！");
     }
   }
 
