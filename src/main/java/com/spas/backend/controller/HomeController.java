@@ -9,6 +9,7 @@ import com.spas.backend.service.UserService;
 import com.spas.backend.util.JWTHelper;
 import com.spas.backend.util.PasswordHelper;
 import com.spas.backend.util.JSONData;
+import com.spas.backend.vo.LoginVo;
 import com.spas.backend.vo.UserVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
@@ -71,13 +72,13 @@ public class HomeController {
 
   /**
    * 登录，发放令牌.  数据库中 password 作为秘密
-   * @param UserLoginInfo 接受JSON字符串，包含多个字段，必有 email 和 password
+   * @param loginVo 接受JSON字符串，包含 email 和 password
    * @return 三个令牌
    */
   @PostMapping("login")
-  public ApiResponse login(HttpServletResponse response, @RequestBody HashMap<String,String> UserLoginInfo) throws JsonProcessingException {
-    String email = UserLoginInfo.get("email");
-    String password = UserLoginInfo.get("password");
+  public ApiResponse login(HttpServletResponse response, @RequestBody LoginVo loginVo){
+    String email = loginVo.getEmail();
+    String password = loginVo.getPassword();
     Assert.notNull(email,"邮箱不能为空");
     Assert.notNull(password,"密码不能为空");
     UserDto userDto = userService.selectUser(email);
@@ -106,7 +107,7 @@ public class HomeController {
       response.addCookie(cookie);
       // 将 isLogged 设置为 Cookie
       Cookie cookieLogged = new Cookie("isLogged","true");
-      cookie.setMaxAge(refreshExpire*60);
+      cookieLogged.setMaxAge(refreshExpire*60);  // 一不小心写成了 cookie ！
       response.addCookie(cookieLogged);
       // 将 userInfo 存储到 Redis 中
       ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
@@ -145,6 +146,51 @@ public class HomeController {
   @GetMapping("refresh")
   @ApiOperation("通过刷新令牌获取访问令牌")
   public ApiResponse refresh(HttpServletRequest request) {
+    return refreshOrInit(request,true);
+  }
+
+  @GetMapping("init")
+  @ApiOperation("初始化阶段，获取访问和ID令牌")
+  public ApiResponse init(HttpServletRequest request){
+    return refreshOrInit(request,false);
+  }
+
+  /**
+   * 服务端判断用户是否登录：redis 中是否有值
+   * @param request 请求中通过 Cookie 获取 id
+   * @return 有则已登录，无则未登录
+   */
+  @GetMapping("isLogged")
+  @ApiOperation("服务端判断用户是否登录：redis 中是否有值")
+  public ApiResponse isLogged(HttpServletRequest request) {
+    Cookie[] cookies = request.getCookies();
+    if(cookies == null){
+      return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
+    }
+    for(Cookie cookie : cookies){
+      if(cookie.getName().equals(cookieName)){
+        String userId = JWTHelper.getUserId(cookie.getValue());
+        // Redis 检查
+        ValueOperations<String, String> valueOperations =  redisTemplate.opsForValue();
+        Assert.notNull(userId,"用户ID不能为空");
+        if(valueOperations.get(userId) == null){
+          return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
+        }
+        else{
+          return new ApiResponse(ApiCode.IS_LOGGED_TRUE);
+        }
+      }
+    }
+    return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
+  }
+
+  /**
+   * 抽出公共部分：是刷新还是初始阶段（是只要 access 还是要 accessAndId）
+   * @param request
+   * @param b 1代表刷新，0代表初始化
+   * @return
+   */
+  private ApiResponse refreshOrInit(HttpServletRequest request, Boolean b){
     Cookie[] cookies = request.getCookies();
     if(cookies == null) {
       return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
@@ -172,10 +218,19 @@ public class HomeController {
           if(refreshToken.equals(refreshTokenRedis)){
             if(JWTHelper.verify(secret,refreshToken) == ApiCode.OK){
               // 有效则给予Access令牌
-              UserDto userDto = userService.selectUserById(userId);
-              String accessTokenNew = JWTHelper.signAccess(userDto,accessExpire);
               JSONData jsonData = new JSONData();
-              jsonData.put("accessToken",accessTokenNew);
+              if(b){
+                UserDto userDto = userService.selectUserById(userId);
+                String accessTokenNew = JWTHelper.signAccess(userDto,accessExpire);
+                jsonData.put("accessToken",accessTokenNew);
+              }
+              else{
+                UserVo userVo = userService.selectUserByIdToVo(userId);
+                String accessTokenNew = JWTHelper.signAccess(userVo,accessExpire);
+                String idTokenNew = JWTHelper.signId(userVo,idExpire);
+                jsonData.put("idToken",idTokenNew);
+                jsonData.put("accessToken",accessTokenNew);
+              }
               return new ApiResponse(ApiCode.IS_LOGGED_TRUE,JSON.toJSON(jsonData));
             }
           }

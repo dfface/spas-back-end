@@ -17,6 +17,10 @@ public class WebMvcConfiguration  extends WebMvcConfigurationSupport{
   @Value("${user.cros.origin}")
   private String CROSOrigin;
 
+  /**
+   * CROS 配置
+   * @param registry
+   */
   @Override
   protected void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
@@ -30,5 +34,20 @@ public class WebMvcConfiguration  extends WebMvcConfigurationSupport{
         "access-control-max-age",
         "X-Frame-Options");
     super.addCorsMappings(registry);
+  }
+
+  /**
+   * 添加静态资源
+   * @param registry
+   */
+  @Override
+  protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+    registry.addResourceHandler("/**").addResourceLocations(
+        "classpath:/static/");
+    registry.addResourceHandler("swagger-ui.html").addResourceLocations(
+        "classpath:/META-INF/resources/");
+    registry.addResourceHandler("/webjars/**").addResourceLocations(
+        "classpath:/META-INF/resources/webjars/");
+    super.addResourceHandlers(registry);
   }
 }
