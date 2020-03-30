@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface OfficeService extends IService<Office> {
 
+  public Office select(String id);
 }

@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(NullPointerException.class)
   public ApiResponse NullPointerExceptionHandler() {
-    return new ApiResponse(ApiCode.NullPointer);
+    return new ApiResponse(ApiCode.NULL_POINTER);
   }
 
   /**
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(IncorrectCredentialsException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ApiResponse IncorrectCredentialsExceptionHandler(IncorrectCredentialsException e) {
-    return new ApiResponse(ApiCode.IncorrectCredentials);
+    return new ApiResponse(ApiCode.INCORRECT_CREDENTIALS);
   }
 
   /**

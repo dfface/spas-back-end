@@ -127,7 +127,7 @@ public class ShiroConfiguration {
     // 登录接口放开
     filterChainDefinitionMap.put("/login", "anon");
     // 所有请求通过我们自己的JWTFilter
-    filterChainDefinitionMap.put("/**", "jwt");
+    filterChainDefinitionMap.put("/**", "anon");
     factoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
     return factoryBean;
   }

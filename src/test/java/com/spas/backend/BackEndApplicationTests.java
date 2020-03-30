@@ -62,8 +62,7 @@ class BackEndApplicationTests {
   void addOffice() {
     Office office = new Office();
     office.setName("内江市人民检察院");
-    office.setAddress("四川省内江市太白路269号");
-    office.setPostcode("234123");
+    office.setUrl("四川省内江市太白路269号");
     office.setEmail("email@njsjcy.gov.cn");
     office.setPhone("0832-6123199");
     officeMapper.insert(office);

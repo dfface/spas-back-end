@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.dto.UserDto;
+import com.spas.backend.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -71,25 +72,47 @@ public class JWTHelper {
 
   /**
    * 生成访问令牌.
-   * @param secret 用户秘密
-   * @param id 用户id
-   * @param roles 用户角色集合
-   * @param permissions 用户权限集合
+   * @param  userVo 用户信息
    * @param expire 过期时间，以分钟计算
    * @return 签发失败返回 null
    */
-  public String signAccess(String secret, String id, Set<String> roles, Set<String> permissions, int expire) {
+  public static String signAccess(UserVo userVo, int expire) {
     try {
       Date date = new Date(System.currentTimeMillis() + expire * 60 * 1000);
-      Algorithm algorithm = Algorithm.HMAC256(secret);
+      Algorithm algorithm = Algorithm.HMAC256(userVo.getPassword());
       return JWT.create()
-          .withKeyId(id)
+          .withKeyId(userVo.getId())
           .withIssuer("http://www.spas.com/")
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
-          .withArrayClaim("roles", roles.toArray(new String[0]))
-          .withArrayClaim("permissions", permissions.toArray(new String[0]))
+          .withArrayClaim("roles", userVo.getRoles().toArray(new String[0]))
+          .withArrayClaim("permissions", userVo.getPermissions().toArray(new String[0]))
+          .sign(algorithm);
+    } catch (JWTCreationException e) {
+      //Invalid Signing configuration / Couldn't convert Claims.
+      return null;
+    }
+  }
+
+  /**
+   * 生成访问令牌.
+   * @param  userDto 用户信息
+   * @param expire 过期时间，以分钟计算
+   * @return 签发失败返回 null
+   */
+  public static String signAccess(UserDto userDto, int expire) {
+    try {
+      Date date = new Date(System.currentTimeMillis() + expire * 60 * 1000);
+      Algorithm algorithm = Algorithm.HMAC256(userDto.getPassword());
+      return JWT.create()
+          .withKeyId(userDto.getId())
+          .withIssuer("http://www.spas.com/")
+          .withNotBefore(new Date(System.currentTimeMillis()))
+          .withIssuedAt(new Date(System.currentTimeMillis()))
+          .withExpiresAt(date)
+          .withArrayClaim("roles", userDto.getRoles().toArray(new String[0]))
+          .withArrayClaim("permissions", userDto.getPermissions().toArray(new String[0]))
           .sign(algorithm);
     } catch (JWTCreationException e) {
       //Invalid Signing configuration / Couldn't convert Claims.
@@ -104,7 +127,7 @@ public class JWTHelper {
    * @param expire 过期时间，以分钟为单位
    * @return 签发失败返回 null
    */
-  public String signRefresh(String secret, String id, int expire) {
+  public static String signRefresh(String secret, String id, int expire) {
     try {
       Date date = new Date(System.currentTimeMillis() + expire * 60 * 1000);
       Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -122,28 +145,35 @@ public class JWTHelper {
 
   /**
    * 生成 ID 令牌.
-   * @param secret 用户秘密
-   * @param id 用户id
    * @param expire 以分钟为单位
    * @return 签发失败返回 null
    */
-  public String signId(String secret, String id, UserDto userDto, int expire) {
+  public static String signId(UserVo userVo, int expire) {
     try {
       Date date = new Date(System.currentTimeMillis() + expire * 60 * 1000);
-      Algorithm algorithm = Algorithm.HMAC256(secret);
+      Algorithm algorithm = Algorithm.HMAC256(userVo.getPassword());  // 密码作为秘密
       return JWT.create()
           // header
-          .withKeyId(id)
+          .withKeyId(userVo.getId())
           // payload
           .withIssuer("http://www.spas.com/")
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
           // user info
-          .withClaim("name",userDto.getName())
-          .withClaim("position",userDto.getPosition())
-          .withClaim("email",userDto.getEmail())
-          .withClaim("phone",userDto.getPhone())
+          .withClaim("id",userVo.getId())
+          .withClaim("name",userVo.getName())
+          .withClaim("position",userVo.getPosition())
+          .withClaim("email",userVo.getEmail())
+          .withClaim("phone",userVo.getPhone())
+          .withClaim("officeUrl",userVo.getOfficeUrl())
+          .withClaim("officeId",userVo.getOfficeId())
+          .withClaim("officePhone",userVo.getOfficePhone())
+          .withClaim("officeEmail",userVo.getOfficeEmail())
+          .withClaim("officeName",userVo.getOfficeName())
+          .withClaim("avatar",userVo.getAvatar())
+          .withClaim("departmentId",userVo.getDepartmentId())
+          .withClaim("departmentName",userVo.getDepartmentName())
           .sign(algorithm);
     } catch (JWTCreationException e) {
       return null;
@@ -152,14 +182,14 @@ public class JWTHelper {
 
   /**
    * 生成三种令牌
-   * @param userDto 用户信息
+   * @param userVo 用户信息
    * @param expire 过期时间字典，至少含 accessExpire refreshExpire idExpire
    * @return token 字典，含有 accessToken refreshToken idToken
    */
-  public HashMap<String,String> sign(UserDto userDto, HashMap<String,Integer> expire) {
-    String accessToken = signAccess(userDto.getPassword(),userDto.getId(),userDto.getRoles(),userDto.getPermissions(),expire.get("accessExpire"));
-    String refreshToken = signRefresh(userDto.getPassword(),userDto.getId(),expire.get("refreshExpire"));
-    String idToken = signId(userDto.getPassword(),userDto.getId(),userDto,expire.get("idExpire"));
+  public static HashMap<String,String> sign(UserVo userVo, HashMap<String,Integer> expire) {
+    String accessToken = signAccess(userVo,expire.get("accessExpire"));
+    String refreshToken = signRefresh(userVo.getPassword(),userVo.getId(),expire.get("refreshExpire"));
+    String idToken = signId(userVo,expire.get("idExpire"));
     HashMap<String,String> token = new HashMap<>();
     token.put("accessToken",accessToken);
     token.put("refreshToken",refreshToken);
