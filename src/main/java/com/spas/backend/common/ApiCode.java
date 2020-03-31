@@ -19,8 +19,8 @@ public enum ApiCode {
   UNKNOWN_ACCOUNT(204,"该用户未注册"),
   PASSWORD_INVALID(205,"密码错误"),
   INCORRECT_CREDENTIALS(206,"密码错误"),
-  // 3XX
-
+  // 3XX 业务相关码
+  UNAUDITED(301,"未经审核"),
 
   ACCESS_TOKEN_EXPIRED(505,"访问令牌过期"),
   ALGORITHM_MISMATCH(601,"令牌中的算法不匹配"),
