@@ -41,7 +41,7 @@ public class CaseController {
 
   @PostMapping("/new")
   public ApiResponse newCase(@RequestBody Cases cases) {
-    // 参数校验
+    // 参数校验(虽然前台已经足够充足)
     caseService.insertCase(cases);
     log.debug("Case New ID: " + cases.getId());
     ApiResponse apiResponse = new ApiResponse(ApiCode.OK);
@@ -58,7 +58,7 @@ public class CaseController {
   @GetMapping("/history/{id}/{current}")
   public ApiResponse history(@PathVariable String id, @PathVariable Integer current){
     // 参数校验
-    IPage<CaseOutlineVo> caseOutlineVoIpage = caseService.selectOutlineAllByPage(id,new Page<CaseOutlineVo>(current,2));
+    IPage<CaseOutlineVo> caseOutlineVoIpage = caseService.selectOutlineAllByPage(id,new Page<CaseOutlineVo>(current,5));
     Map<String,Object> map = new HashMap<>();
     map.put("count",caseOutlineVoIpage.getPages());
     map.put("current",caseOutlineVoIpage.getCurrent());

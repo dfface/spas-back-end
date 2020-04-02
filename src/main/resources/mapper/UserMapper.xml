@@ -8,10 +8,8 @@
         <result property="password" column="password"/>
         <result property="position" column="position"/>
         <result property="email" column="email"/>
-        <result property="phone" column="phone"/>
         <result property="officeId" column="office_id"/>
         <result property="departmentId" column="department_id"/>
-        <result property="avatar" column="avatar"/>
         <collection property="roles" ofType="String">
             <id column="role"/>
         </collection>
@@ -20,7 +18,7 @@
         </collection>
     </resultMap>
     <select id="selectUserByEmail" resultMap="UserDtoResultMap">
-        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.phone,u.office_id,u.department_id,u.avatar
+        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.office_id,u.department_id
              , r.`code` AS role, o.`code` AS permission
         FROM `user` AS u
                  INNER JOIN user_role AS ur
@@ -39,7 +37,7 @@
             AND o.is_deleted = b'0' OR o.is_deleted = null
     </select>
     <select id="selectUserById" resultMap="UserDtoResultMap">
-        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.phone,u.office_id,u.department_id,u.avatar
+        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.office_id,u.department_id
              , r.`code` AS role, o.`code` AS permission
         FROM `user` AS u
                  INNER JOIN user_role AS ur

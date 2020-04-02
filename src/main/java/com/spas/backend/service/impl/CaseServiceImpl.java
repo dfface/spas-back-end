@@ -66,7 +66,7 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Cases> implements C
         queryWrapper.or().eq("state",state[i]);
       }
     }
-    List<Cases> casesList = caseMapper.selectList(queryWrapper);
+    List<Cases> casesList = caseMapper.selectList(queryWrapper.orderByDesc("create_time","update_time"));
     log.debug(casesList.toString());
     List<CaseOutlineVo> caseOutlineVos = new ArrayList<>();
     for(Cases cases : casesList){

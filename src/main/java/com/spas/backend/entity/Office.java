@@ -34,8 +34,6 @@ public class Office implements Serializable {
 
   private String url;
 
-  private String phone;
-
   private String email;
 
   private LocalDateTime createTime;

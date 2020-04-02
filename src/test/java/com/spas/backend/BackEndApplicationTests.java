@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 
-//@SpringBootTest
+@SpringBootTest
 class BackEndApplicationTests {
 
   @Autowired
@@ -48,8 +48,6 @@ class BackEndApplicationTests {
     user.setName("李四");
     user.setPosition("国土资源局局长");
     user.setEmail("handy1998@qq.com");
-    user.setPhone("18072837645");
-    user.setAvatar("https://mybatis.plus/img/logo.png");
     user.setOfficeId("a887c5eb331721807d88f4e9c40e2dcd");
     user.setDepartmentId("de20808201c66109f3a3202d05e1f795");
     user.setPassword("123456");
@@ -58,13 +56,12 @@ class BackEndApplicationTests {
     userService.insertUser(userDto);
   }
 
-//  @Test
+  @Test
   void addOffice() {
     Office office = new Office();
-    office.setName("内江市人民检察院");
-    office.setUrl("四川省内江市太白路269号");
-    office.setEmail("email@njsjcy.gov.cn");
-    office.setPhone("0832-6123199");
+    office.setName("宜昌市人民检察院");
+    office.setUrl("http://yc.hbjc.gov.cn/");
+    office.setEmail("yuhan@wwpjw.net");
     officeMapper.insert(office);
     System.out.println("id:" + office.getId());
   }

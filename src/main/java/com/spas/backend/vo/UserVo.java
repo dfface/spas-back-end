@@ -19,8 +19,6 @@ public class UserVo implements Serializable {
 
   private String email;
 
-  private String phone;
-
   private String departmentId;
 
   private String departmentName;
@@ -34,8 +32,6 @@ public class UserVo implements Serializable {
   private String officePhone;
 
   private String officeEmail;
-
-  private String avatar;
 
   // 增加用户角色
   private Set<String> roles;

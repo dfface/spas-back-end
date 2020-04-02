@@ -83,7 +83,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     userVo.setOfficeUrl(office.getUrl());
     userVo.setOfficeEmail(office.getEmail());
     userVo.setOfficeName(office.getName());
-    userVo.setOfficePhone(office.getPhone());
     return userVo;
   }
 }

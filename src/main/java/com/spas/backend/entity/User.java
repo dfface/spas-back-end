@@ -42,13 +42,9 @@ public class User implements Serializable {
 
   private String email;
 
-  private String phone;
-
   private String departmentId;
 
   private String officeId;
-
-  private String avatar;
 
   private LocalDateTime createTime;
 

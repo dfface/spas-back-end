@@ -165,13 +165,11 @@ public class JWTHelper {
           .withClaim("name",userVo.getName())
           .withClaim("position",userVo.getPosition())
           .withClaim("email",userVo.getEmail())
-          .withClaim("phone",userVo.getPhone())
           .withClaim("officeUrl",userVo.getOfficeUrl())
           .withClaim("officeId",userVo.getOfficeId())
           .withClaim("officePhone",userVo.getOfficePhone())
           .withClaim("officeEmail",userVo.getOfficeEmail())
           .withClaim("officeName",userVo.getOfficeName())
-          .withClaim("avatar",userVo.getAvatar())
           .withClaim("departmentId",userVo.getDepartmentId())
           .withClaim("departmentName",userVo.getDepartmentName())
           .sign(algorithm);
