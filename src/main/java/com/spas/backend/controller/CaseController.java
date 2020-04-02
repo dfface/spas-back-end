@@ -1,14 +1,21 @@
 package com.spas.backend.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.entity.Cases;
 import com.spas.backend.service.CaseService;
+import com.spas.backend.vo.CaseOutlineVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -40,6 +47,23 @@ public class CaseController {
     ApiResponse apiResponse = new ApiResponse(ApiCode.OK);
     apiResponse.setData(cases.getId());
     return apiResponse;
+  }
+
+  @GetMapping("/handling/{id}")
+  public ApiResponse handling(@PathVariable String id){
+    // 参数校验
+    return new ApiResponse(ApiCode.OK, caseService.selectOutline(id,1,2,3));
+  }
+
+  @GetMapping("/history/{id}/{current}")
+  public ApiResponse history(@PathVariable String id, @PathVariable Integer current){
+    // 参数校验
+    IPage<CaseOutlineVo> caseOutlineVoIpage = caseService.selectOutlineAllByPage(id,new Page<CaseOutlineVo>(current,2));
+    Map<String,Object> map = new HashMap<>();
+    map.put("count",caseOutlineVoIpage.getPages());
+    map.put("current",caseOutlineVoIpage.getCurrent());
+    map.put("content",caseOutlineVoIpage.getRecords());
+    return new ApiResponse(ApiCode.OK, JSON.toJSON(map));
   }
 }
 

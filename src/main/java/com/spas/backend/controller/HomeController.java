@@ -169,15 +169,23 @@ public class HomeController {
     }
     for(Cookie cookie : cookies){
       if(cookie.getName().equals(cookieName)){
+        String refreshToken = cookie.getValue();
         String userId = JWTHelper.getUserId(cookie.getValue());
         // Redis 检查
         ValueOperations<String, String> valueOperations =  redisTemplate.opsForValue();
         Assert.notNull(userId,"用户ID不能为空");
+        // 没有用户id的 redis 记录
         if(valueOperations.get(userId) == null){
           return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
         }
-        else{
+        HashMap<String, String> map = JSON.parseObject(valueOperations.get(userId),JSONData.class);
+        // 验证 refresh Token 是否一致
+        Assert.notNull(map,"用户信息不能为空");
+        if(map.get("refreshToken").equals(refreshToken)){
           return new ApiResponse(ApiCode.IS_LOGGED_TRUE);
+        }
+        else{
+          return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
         }
       }
     }

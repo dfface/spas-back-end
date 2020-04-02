@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@MapperScan("com.spas.backend.mapper")
 public class BackEndApplication {
 
   public static void main(String[] args) {
