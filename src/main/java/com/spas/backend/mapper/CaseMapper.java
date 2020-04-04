@@ -6,6 +6,8 @@ import com.spas.backend.entity.Cases;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.spas.backend.vo.CaseOutlineVo;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -17,4 +19,8 @@ import com.spas.backend.vo.CaseOutlineVo;
 public interface CaseMapper extends BaseMapper<Cases> {
 
   IPage<CaseOutlineVo> selectOutlineAllByPage(Page<?> page, String creatorId);
+
+  List<CaseOutlineVo> selectOutlineAuditing(String officeId);
+
+  Boolean updateState(String id, Integer state, String opinion);
 }

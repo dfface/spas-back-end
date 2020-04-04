@@ -81,4 +81,14 @@ public class CaseServiceImpl extends ServiceImpl<CaseMapper, Cases> implements C
   public IPage<CaseOutlineVo> selectOutlineAllByPage(String creatorId, Page<CaseOutlineVo> page) {
     return caseMapper.selectOutlineAllByPage(page,creatorId);
   }
+
+  @Override
+  public List<CaseOutlineVo> selectOutlineAuditing(String officeId) {
+    return caseMapper.selectOutlineAuditing(officeId);
+  }
+
+  @Override
+  public Boolean updateState(String id, Integer state, String opinion) {
+    return caseMapper.updateState(id,state,opinion);
+  }
 }

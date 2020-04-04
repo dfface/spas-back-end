@@ -45,4 +45,19 @@ public interface CaseService extends IService<Cases> {
    */
   public IPage<CaseOutlineVo> selectOutlineAllByPage(String creatorId, Page<CaseOutlineVo> page);
 
+  /**
+   * 查找数据库中所有需要审核的案件（以检察院为单位）.
+   * @param officeId 检察院id
+   * @return 列表
+   */
+  public List<CaseOutlineVo> selectOutlineAuditing(String officeId);
+
+  /**
+   * 更新案件的状态.
+   * @param id 案件id
+   * @param state 案件状态
+   * @param opinion 审核建议
+   * @return 成功与否
+   */
+  public Boolean updateState(String id, Integer state, String opinion);
 }

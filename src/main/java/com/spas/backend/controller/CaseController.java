@@ -9,6 +9,7 @@ import com.spas.backend.common.ApiResponse;
 import com.spas.backend.entity.Cases;
 import com.spas.backend.service.CaseService;
 import com.spas.backend.vo.CaseOutlineVo;
+import com.spas.backend.vo.CaseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +65,24 @@ public class CaseController {
     map.put("current",caseOutlineVoIpage.getCurrent());
     map.put("content",caseOutlineVoIpage.getRecords());
     return new ApiResponse(ApiCode.OK, JSON.toJSON(map));
+  }
+
+  @GetMapping("/auditing/{id}")
+  public ApiResponse auditing(@PathVariable String id){
+    // 参数校验
+    return new ApiResponse(ApiCode.OK,caseService.selectOutlineAuditing(id));
+  }
+
+  @PostMapping("/auditing/{id}/{state}")
+  public ApiResponse auditing(@PathVariable String id, @PathVariable Integer state, @RequestBody String opinion){
+    // 参数校验
+    return new ApiResponse(ApiCode.OK,caseService.updateState(id,state,opinion));
+  }
+
+  @PostMapping("/revise")
+  public ApiResponse revise(@RequestBody Cases data){
+    // 参数校验
+      return new ApiResponse(ApiCode.OK,caseService.updateById(data));
   }
 }
 

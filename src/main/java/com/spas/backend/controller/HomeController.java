@@ -156,9 +156,9 @@ public class HomeController {
   }
 
   /**
-   * 服务端判断用户是否登录：redis 中是否有值
+   * 服务端判断用户是否登录：redis 中是否有值，且值是否正确
    * @param request 请求中通过 Cookie 获取 id
-   * @return 有则已登录，无则未登录
+   * @return 有且正确则已登录，否则未登录
    */
   @GetMapping("isLogged")
   @ApiOperation("服务端判断用户是否登录：redis 中是否有值")
