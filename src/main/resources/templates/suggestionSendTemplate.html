@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<!--${government}-->
+<!--${title}-->
+<!--${suggestion}-->
+<!--${deadline}-->
+<!--${secret}-->
+<!--${url}-->
+<!--${officeName}-->
+<!--${createTime}-->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>${title}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .contact-clean {
+            background: #f1f7fc;
+            padding: 80px 0;
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+        @media (max-width:767px) {
+            .contact-clean {
+                padding: 20px 0;
+            }
+        }
+
+        .contact-clean form {
+            max-width: 480px;
+            width: 90%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 4px;
+            color: #505e6c;
+            box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width:767px) {
+            .contact-clean form {
+                padding: 30px;
+            }
+        }
+
+        .contact-clean h2 {
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 28px;
+            margin-bottom: 36px;
+            color: inherit;
+        }
+
+        .contact-clean .form-group:last-child {
+            margin-bottom: 5px;
+        }
+
+        .contact-clean form .form-control {
+            background: #fff;
+            border-radius: 2px;
+            box-shadow: 1px 1px 1px rgba(0,0,0,0.05);
+            outline: none;
+            color: inherit;
+            padding-left: 12px;
+            height: 42px;
+        }
+
+        .contact-clean form .form-control:focus {
+            border: 1px solid #b2b2b2;
+        }
+
+        .contact-clean form textarea.form-control {
+            min-height: 100px;
+            max-height: 260px;
+            padding-top: 10px;
+            resize: vertical;
+        }
+
+        .contact-clean form .btn {
+            padding: 16px 32px;
+            border: none;
+            background: none;
+            box-shadow: none;
+            text-shadow: none;
+            opacity: 0.9;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.4px;
+            line-height: 1;
+            outline: none !important;
+        }
+
+        .contact-clean form .btn:hover {
+            opacity: 1;
+        }
+
+        .contact-clean form .btn:active {
+            transform: translateY(1px);
+        }
+
+        .contact-clean form .btn-primary {
+            background-color: #055ada !important;
+            margin-top: 15px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+<div class="contact-clean">
+    <form method="post">
+        <h2 class="text-center">检察建议送达通知</h2>
+        <p th:text="|${government} : |"></p>
+        <p th:text="${suggestion}"></p>
+        <div class="alert alert-danger" role="alert"><span th:utext="|<strong>注意</strong> 请在收到通知后，&nbsp; ${deadline} &nbsp;时限内回复。请立即访问检察建议流程辅助办案系统，注册并登录，通过密码关联案件，以获取更多有效信息。|"></span></div>
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text" th:text="|关联密码：${secret}|"></p>
+                <p class="card-text">检察建议流程辅助办案系统网址：<a th:href="${url}" target="_blank" th:text="${url}"></a></p>
+                <p class="card-text" th:text="${officeName} + '发布，' +  ${createTime}"></p>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

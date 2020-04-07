@@ -46,15 +46,15 @@ dependencies {
     implementation 'com.alibaba:druid-spring-boot-starter:1.1.20'  // Druid
     implementation 'junit:junit:4.12'
     implementation 'org.apache.shiro:shiro-spring-boot-web-starter:1.5.2'  // Shiro web
-    compile('org.slf4j:slf4j-api:1.7.30')  // slf4j-api
+    implementation('org.slf4j:slf4j-api:1.7.30')  // slf4j-api
 //    compile 'org.slf4j:slf4j-log4j12:1.7.30'  // spring boot 自带 logback
 
 //    compile('org.apache.logging.log4j:log4j-slf4j-impl:2.13.1')  // log4j for slf4j
-    compile('org.modelmapper:modelmapper:2.3.6')  // model mapper
-    runtime('org.springframework.boot:spring-boot-devtools')  // hot deploy
-    compile('org.springframework.boot:spring-boot-starter-thymeleaf') // Thymeleaf
+    implementation('org.modelmapper:modelmapper:2.3.6')  // model mapper
+    runtimeOnly('org.springframework.boot:spring-boot-devtools')  // hot deploy
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf') // Thymeleaf
     implementation 'com.auth0:java-jwt:3.10.1'  // auth0 JWT
-    compile 'com.alibaba:fastjson:1.2.61'  // fast json
+    implementation 'com.alibaba:fastjson:1.2.61'  // fast json
 }
 
 test {

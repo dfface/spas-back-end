@@ -38,7 +38,7 @@ public class Suggestion implements Serializable {
   private String content;
 
   @ApiModelProperty(value = "回复时间范围")
-  private String timeRange;
+  private LocalDateTime deadline;
 
   private Integer state;
 
@@ -57,5 +57,4 @@ public class Suggestion implements Serializable {
   private String creatorId;
 
   private String officeId;
-
 }

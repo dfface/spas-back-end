@@ -6,6 +6,8 @@ import com.spas.backend.service.SuggestionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * <p>
  *  服务实现类
@@ -17,4 +19,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class SuggestionServiceImpl extends ServiceImpl<SuggestionMapper, Suggestion> implements SuggestionService {
 
+  @Resource
+  private SuggestionMapper suggestionMapper;
+
+  @Override
+  public int newSuggestion(Suggestion suggestion) {
+    return suggestionMapper.insert(suggestion);
+  }
+
+  @Override
+  public Suggestion select(String id) {
+    return suggestionMapper.selectById(id);
+  }
 }

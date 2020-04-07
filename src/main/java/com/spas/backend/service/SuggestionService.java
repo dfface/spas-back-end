@@ -13,4 +13,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface SuggestionService extends IService<Suggestion> {
 
+  /**
+   * 新建一个检察建议
+   * @param suggestion 检察建议实体
+   * @return 成功与否
+   */
+  public int newSuggestion(Suggestion suggestion);
+
+  /**
+   * 通过id查找检察建议.
+   * @param id 检察建议id
+   * @return 检察建议
+   */
+  public Suggestion select(String id);
 }

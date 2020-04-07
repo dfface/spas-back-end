@@ -15,5 +15,7 @@ public class CaseOutlineVo implements Serializable {
 
   private String description;
 
+  private String government;
+
   private Integer state;
 }
