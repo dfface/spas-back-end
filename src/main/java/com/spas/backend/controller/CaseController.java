@@ -11,6 +11,7 @@ import com.spas.backend.service.CaseService;
 import com.spas.backend.vo.CaseOutlineVo;
 import com.spas.backend.vo.CaseVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,6 +34,9 @@ public class CaseController {
 
   @Resource
   private CaseService caseService;
+
+  @Value("${user.page.size}")
+  private String pageSize;
 
   @GetMapping("/detail/{id}")
   public ApiResponse detail(@PathVariable String id){
@@ -57,9 +61,9 @@ public class CaseController {
   }
 
   @GetMapping("/history/{id}/{current}")
-  public ApiResponse history(@PathVariable String id, @PathVariable Integer current){
+  public ApiResponse history(@PathVariable String id, @PathVariable long current){
     // 参数校验
-    IPage<CaseOutlineVo> caseOutlineVoIpage = caseService.selectOutlineAllByPage(id,new Page<CaseOutlineVo>(current,5));
+    IPage<CaseOutlineVo> caseOutlineVoIpage = caseService.selectOutlineAllByPage(id,new Page<CaseOutlineVo>(current, Integer.valueOf(pageSize).longValue()));
     Map<String,Object> map = new HashMap<>();
     map.put("count",caseOutlineVoIpage.getPages());
     map.put("current",caseOutlineVoIpage.getCurrent());

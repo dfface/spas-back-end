@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  * @author Yuhan Liu
  * @since 2020-03-26
  */
-@Component
 public class JWTHelper {
   // 过期时间 2分钟
 //  private static final long EXPIRE_TIME = 2*60*1000;

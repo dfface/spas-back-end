@@ -9,9 +9,7 @@ import java.util.HashMap;
 
 public class JsonUtil {
 
-  static class HashMapStringString extends HashMap<String,String>{}
-
   public static HashMap<String,String> JsonToHashMap(String s){
-    return JSON.parseObject(s,HashMapStringString.class);
+    return JSON.parseObject(s,JSONData.class);
   }
 }

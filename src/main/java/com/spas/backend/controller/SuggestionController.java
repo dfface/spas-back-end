@@ -2,6 +2,8 @@ package com.spas.backend.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.SuggestionDto;
@@ -13,6 +15,7 @@ import com.spas.backend.util.EmailHelper;
 import com.spas.backend.vo.SuggestionVo;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -20,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +50,9 @@ public class SuggestionController {
 
   @Resource
   private OfficeService officeService;
+
+  @Value("${user.page.size}")
+  private String pageSize;
 
   @PostMapping("/new")
   public ApiResponse newSuggestion(@RequestBody SuggestionDto suggestionDto){
@@ -87,6 +94,25 @@ public class SuggestionController {
       suggestionVo.setSue(true);
     }
     return new ApiResponse(ApiCode.OK, suggestionVo);
+  }
+
+  @GetMapping("/history/{id}/{current}")
+  public ApiResponse history(@PathVariable String id, @PathVariable long current){
+    IPage<SuggestionVo> suggestionVos = suggestionService.selectSuggestionVoAllByPage(id,new Page<SuggestionVo>(current,Integer.valueOf(pageSize).longValue()));
+    List<SuggestionVo> suggestionVoList = suggestionVos.getRecords();
+    for(SuggestionVo suggestionVo : suggestionVoList){
+      if(suggestionVo.getDeadline().isBefore(LocalDateTime.now())){
+        suggestionVo.setSue(true);
+      }
+      else{
+        suggestionVo.setSue(false);
+      }
+    }
+    Map<String,Object> map = new HashMap<>();
+    map.put("count",suggestionVos.getPages());
+    map.put("current",suggestionVos.getCurrent());
+    map.put("content",suggestionVoList);
+    return new ApiResponse(ApiCode.OK,map);
   }
 }
 

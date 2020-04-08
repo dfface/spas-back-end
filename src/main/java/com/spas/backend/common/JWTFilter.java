@@ -47,17 +47,17 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     // 这个对象中封装了向客户端发送数据、发送响应头，发送响应状态码的方法。
     HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
 //    // 设置跨域支持
-//    httpServletResponse.setHeader("Access-control-Allow-Origin", CROSOrigin);  // httpServletRequest.getHeader("Origin")  不能是 *（所有来源），否则 credential 失效
-//    httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true"); //true代表允许携带cookie
-//    httpServletResponse.setHeader("Access-control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
-//    httpServletResponse.setHeader("Access-Control-Allow-Headers",httpServletRequest.getHeader("Access-Control-Request-Headers"));
-//    log.debug("Origin: " + httpServletRequest.getHeader("Origin"));
-//    log.debug("Access-Control-Request-Headers: " + httpServletRequest.getHeader("Access-Control-Request-Headers"));
+    httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");  // httpServletRequest.getHeader("Origin")  不能是 *（所有来源），否则 credential 失效
+    httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true"); //true代表允许携带cookie
+    httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+    httpServletResponse.setHeader("Access-Control-Allow-Headers",httpServletRequest.getHeader("Access-Control-Request-Headers"));
+    log.info("Origin: " + httpServletRequest.getHeader("Origin"));
+    log.info("Access-Control-Request-Headers: " + httpServletRequest.getHeader("Access-Control-Request-Headers"));
     // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
     if(httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
       log.info("收到options请求");
       httpServletResponse.setStatus(HttpStatus.OK.value());
-      return false;
+      return true;
     }
     return super.preHandle(request, response);
   }
@@ -103,6 +103,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 //    String authorization = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
     // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
     JWTToken token = new JWTToken(getAuthzHeader(request));
+    log.info(getAuthzHeader(request).toString());
     // 提交给 realm 进行登录
     log.info("执行登录：提交给 realm 进行登录");
     getSubject(request, response).login(token);
