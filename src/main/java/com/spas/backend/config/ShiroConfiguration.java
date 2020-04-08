@@ -104,7 +104,6 @@ public class ShiroConfiguration {
    * @author Yuhan Liu
    * @date 2020-03-27
    */
-  @Bean(name = "shiroFilter") //如果没有此name,将会找不到shiroFilter的Bean
   public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager) {
     ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
     // 添加自己的过滤器取名为jwt
@@ -124,10 +123,13 @@ public class ShiroConfiguration {
      filterChainDefinitionMap.put("/configuration/**", "anon");
     // 公开接口
     // filterChainDefinitionMap.put("/api/**", "anon");
-    // 登录接口放开
+    // 登录接口放开，要知道 HomeController 都应该放开
     filterChainDefinitionMap.put("/login", "anon");
     filterChainDefinitionMap.put("/isLogged", "anon");
     filterChainDefinitionMap.put("/init", "anon");
+    filterChainDefinitionMap.put("/error", "anon");
+    filterChainDefinitionMap.put("/refresh", "anon");
+
     // 所有请求通过我们自己的JWTFilter
     // 过滤链定义，从上向下顺序执行，一般将放在最为下边
     filterChainDefinitionMap.put("/**", "jwt");

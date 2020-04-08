@@ -42,6 +42,10 @@ public class Report implements Serializable {
 
   private Integer state;
 
+  private String caseId;
+
+  private String suggestionId;
+
   private LocalDateTime createTime;
 
   @TableField(update = "now()")

@@ -2,14 +2,10 @@ package com.spas.backend.service.impl;
 
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.UserDto;
-import com.spas.backend.entity.Department;
 import com.spas.backend.entity.Office;
 import com.spas.backend.entity.User;
-import com.spas.backend.mapper.DepartmentMapper;
 import com.spas.backend.mapper.OfficeMapper;
 import com.spas.backend.mapper.UserMapper;
-import com.spas.backend.service.DepartmentService;
-import com.spas.backend.service.OfficeService;
 import com.spas.backend.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spas.backend.util.PasswordHelper;
@@ -20,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -42,9 +37,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
   @Resource
   private OfficeMapper officeMapper;
-
-  @Resource
-  private DepartmentMapper departmentMapper;
 
   @Autowired
   private void setModelMapper(ModelMapper modelMapper) {
@@ -78,8 +70,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     UserDto userDto = userMapper.selectUserById(id);
     modelMapper.map(userDto,userVo);
     Office office = officeMapper.selectById(userDto.getOfficeId());
-    Department department = departmentMapper.selectById(userDto.getDepartmentId());
-    userVo.setDepartmentName(department.getName());
     userVo.setOfficeUrl(office.getUrl());
     userVo.setOfficeEmail(office.getEmail());
     userVo.setOfficeName(office.getName());

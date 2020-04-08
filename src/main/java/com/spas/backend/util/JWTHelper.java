@@ -9,6 +9,7 @@ import com.spas.backend.common.ApiCode;
 import com.spas.backend.dto.UserDto;
 import com.spas.backend.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class JWTHelper {
   // 过期时间 2分钟
 //  private static final long EXPIRE_TIME = 2*60*1000;
+  @Value("${user.site.url}")
+  private static String siteUrl;
 
   /**
    * 校验 token 是否有效.
@@ -81,7 +84,7 @@ public class JWTHelper {
       Algorithm algorithm = Algorithm.HMAC256(userVo.getPassword());
       return JWT.create()
           .withKeyId(userVo.getId())
-          .withIssuer("http://www.spas.com/")
+          .withIssuer(siteUrl)
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
@@ -106,7 +109,7 @@ public class JWTHelper {
       Algorithm algorithm = Algorithm.HMAC256(userDto.getPassword());
       return JWT.create()
           .withKeyId(userDto.getId())
-          .withIssuer("http://www.spas.com/")
+          .withIssuer(siteUrl)
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
@@ -132,7 +135,7 @@ public class JWTHelper {
       Algorithm algorithm = Algorithm.HMAC256(secret);
       return JWT.create()
           .withKeyId(id)
-          .withIssuer("http://www.spas.com/")
+          .withIssuer(siteUrl)
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
@@ -155,7 +158,7 @@ public class JWTHelper {
           // header
           .withKeyId(userVo.getId())
           // payload
-          .withIssuer("http://www.spas.com/")
+          .withIssuer(siteUrl)
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
@@ -166,11 +169,8 @@ public class JWTHelper {
           .withClaim("email",userVo.getEmail())
           .withClaim("officeUrl",userVo.getOfficeUrl())
           .withClaim("officeId",userVo.getOfficeId())
-          .withClaim("officePhone",userVo.getOfficePhone())
           .withClaim("officeEmail",userVo.getOfficeEmail())
           .withClaim("officeName",userVo.getOfficeName())
-          .withClaim("departmentId",userVo.getDepartmentId())
-          .withClaim("departmentName",userVo.getDepartmentName())
           .sign(algorithm);
     } catch (JWTCreationException e) {
       return null;

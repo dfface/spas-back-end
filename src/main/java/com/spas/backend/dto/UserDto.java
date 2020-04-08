@@ -22,13 +22,10 @@ public class UserDto implements Serializable {
 
   private String email;
 
-  private String phone;
-
-  private String departmentId;
-
   private String officeId;
 
-  private String avatar;
+  // 添加了检察院名称
+  private String officeName;
 
   // 增加用户角色
   private Set<String> roles;

@@ -43,4 +43,10 @@ public class ApiResponse implements Serializable {
     this.msg = ApiCode.OK.getMsg();
     this.data = JSON.toJSON(data);
   }
+
+  public ApiResponse(String data){
+    this.code = ApiCode.OK.getIndex();
+    this.msg = ApiCode.OK.getMsg();
+    this.data = data;
+  }
 }

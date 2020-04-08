@@ -19,17 +19,11 @@ public class UserVo implements Serializable {
 
   private String email;
 
-  private String departmentId;
-
-  private String departmentName;
-
   private String officeId;
 
   private String officeName;
 
   private String officeUrl;
-
-  private String officePhone;
 
   private String officeEmail;
 

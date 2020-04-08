@@ -85,6 +85,7 @@ public class RealmConfiguration extends AuthorizingRealm {
     log.info("认证");
     // 根据之前的 JWTToken 可知，这里仍然尝试获取 token
     String JWTtoken = (String)token.getCredentials();
+    log.info("携带的JWTToken：" + JWTtoken);
     String id = JWTHelper.getUserId(JWTtoken);
     if(id == null) {
       log.info("令牌不合法");

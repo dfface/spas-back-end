@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.UserDto;
+import com.spas.backend.entity.User;
 import com.spas.backend.service.UserService;
 import com.spas.backend.util.JWTHelper;
 import com.spas.backend.util.PasswordHelper;
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -39,6 +41,9 @@ public class HomeController {
   private UserService userService;
 
   private PasswordHelper passwordHelper;
+
+  @Resource
+  private ModelMapper modelMapper;
 
   // 访问令牌过期时间
   private int accessExpire = 5;
@@ -250,5 +255,13 @@ public class HomeController {
     }
     // 不含 cookie 则未登录
     return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
+  }
+
+  @PostMapping("/register")
+  public ApiResponse register(@RequestBody UserDto userDto){
+    User user = new User();
+    modelMapper.map(userDto,user);
+    userService.save(user);
+    return new ApiResponse(user.getId());
   }
 }
