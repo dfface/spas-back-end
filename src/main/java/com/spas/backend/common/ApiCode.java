@@ -19,6 +19,8 @@ public enum ApiCode {
   UNKNOWN_ACCOUNT(204,"该用户未注册"),
   PASSWORD_INVALID(205,"密码错误"),
   INCORRECT_CREDENTIALS(206,"密码错误"),
+  ALREADY_REGISTERED(207, "该邮箱已经注册过了"),
+  USER_AUDIT_NOT_PASSED(208, "用户审核未通过"),
   // 3XX 业务相关码
   UNAUDITED(301,"未经审核"),
 

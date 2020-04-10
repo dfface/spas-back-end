@@ -9,7 +9,7 @@
         <result property="position" column="position"/>
         <result property="email" column="email"/>
         <result property="officeId" column="office_id"/>
-        <result property="departmentId" column="department_id"/>
+        <result property="state" column="state"/>
         <collection property="roles" ofType="String">
             <id column="role"/>
         </collection>
@@ -18,7 +18,7 @@
         </collection>
     </resultMap>
     <select id="selectUserByEmail" resultMap="UserDtoResultMap">
-        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.office_id,u.department_id
+        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.office_id,u.state
              , r.`code` AS role, o.`code` AS permission
         FROM `user` AS u
                  INNER JOIN user_role AS ur
@@ -37,7 +37,7 @@
             AND o.is_deleted = b'0' OR o.is_deleted = null
     </select>
     <select id="selectUserById" resultMap="UserDtoResultMap">
-        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.office_id,u.department_id
+        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.office_id,u.state
              , r.`code` AS role, o.`code` AS permission
         FROM `user` AS u
                  INNER JOIN user_role AS ur
@@ -49,6 +49,25 @@
                  LEFT JOIN operation o
                            ON ro.ope_id = o.id
         WHERE u.id = #{id}
+            AND u.is_deleted = b'0' OR u.is_deleted = null
+            AND ur.is_deleted = b'0' OR ur.is_deleted = null
+            AND r.is_deleted = b'0' OR r.is_deleted = null
+            AND ro.is_deleted = b'0' OR ro.is_deleted = null
+            AND o.is_deleted = b'0' OR o.is_deleted = null
+    </select>
+    <select id="selectUserByEmailAndOfficeId" resultMap="UserDtoResultMap">
+        SELECT u.id,u.`name`,u.salt,u.`password`,u.position,u.email,u.office_id,u.state
+             , r.`code` AS role, o.`code` AS permission
+        FROM `user` AS u
+                 INNER JOIN user_role AS ur
+                            ON u.id = ur.use_id
+                 LEFT JOIN role AS r
+                           ON ur.rol_id = r.id
+                 LEFT JOIN role_operation ro
+                           ON r.id = ro.rol_id
+                 LEFT JOIN operation o
+                           ON ro.ope_id = o.id
+        WHERE u.email = #{email} AND u.office_id = #{officeId}
             AND u.is_deleted = b'0' OR u.is_deleted = null
             AND ur.is_deleted = b'0' OR ur.is_deleted = null
             AND r.is_deleted = b'0' OR r.is_deleted = null

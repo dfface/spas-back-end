@@ -1,5 +1,6 @@
 package com.spas.backend.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.UserDto;
 import com.spas.backend.entity.Office;
@@ -74,5 +75,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     userVo.setOfficeEmail(office.getEmail());
     userVo.setOfficeName(office.getName());
     return userVo;
+  }
+
+  @Override
+  public UserDto selectUser(String email, String officeId) {
+    return userMapper.selectUserByEmailAndOfficeId(email, officeId);
   }
 }

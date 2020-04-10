@@ -17,8 +17,8 @@ class BackEndApplicationTests {
 //  @Autowired
 //  ModelMapper modelMapper;
 //
-//  @Autowired
-//  OfficeMapper officeMapper;
+  @Autowired
+  OfficeMapper officeMapper;
 //
 //  @Resource
 //  OperationMapper operationMapper;
@@ -53,15 +53,15 @@ class BackEndApplicationTests {
 //    userService.insertUser(userDto);
 //  }
 //
-//  @Test
-//  void addOffice() {
-//    Office office = new Office();
-//    office.setName("宜昌市人民检察院");
-//    office.setUrl("http://yc.hbjc.gov.cn/");
-//    office.setEmail("yuhan@wwpjw.net");
-//    officeMapper.insert(office);
-//    System.out.println("id:" + office.getId());
-//  }
+  @Test
+  void addOffice() {
+    Office office = new Office();
+    office.setName("扬州市人民检察院");
+    office.setUrl("http://yc.hbjc.gov.cn/");
+    office.setEmail("yuhan@wwpjw.net");
+    officeMapper.insert(office);
+    System.out.println("id:" + office.getId());
+  }
 //
 ////  @Test
 //  void addDepartment() {

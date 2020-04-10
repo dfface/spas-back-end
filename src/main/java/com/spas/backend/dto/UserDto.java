@@ -24,6 +24,8 @@ public class UserDto implements Serializable {
 
   private String officeId;
 
+  private Integer state;
+
   // 添加了检察院名称
   private String officeName;
 

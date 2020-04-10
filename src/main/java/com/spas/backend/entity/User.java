@@ -56,4 +56,6 @@ public class User implements Serializable {
 
   private String officeName;
 
+  private Integer state;
+
 }

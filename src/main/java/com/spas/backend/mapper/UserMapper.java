@@ -14,5 +14,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface UserMapper extends BaseMapper<User> {
   public UserDto selectUserByEmail(String email);
+  public UserDto selectUserByEmailAndOfficeId(String email, String officeId);
   public UserDto selectUserById(String id);
 }

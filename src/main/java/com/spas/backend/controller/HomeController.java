@@ -6,11 +6,14 @@ import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.UserDto;
 import com.spas.backend.entity.User;
+import com.spas.backend.entity.UserRole;
+import com.spas.backend.service.UserRoleService;
 import com.spas.backend.service.UserService;
 import com.spas.backend.util.JWTHelper;
 import com.spas.backend.util.PasswordHelper;
 import com.spas.backend.util.JSONData;
 import com.spas.backend.vo.LoginVo;
+import com.spas.backend.vo.UserRegisterVo;
 import com.spas.backend.vo.UserVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
@@ -22,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,6 +33,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -59,6 +64,9 @@ public class HomeController {
 
   private StringRedisTemplate redisTemplate;
 
+  @Resource
+  private UserRoleService userRoleService;
+
   @Autowired
   public void setRedisTemplate(StringRedisTemplate redisTemplate) {
     this.redisTemplate = redisTemplate;
@@ -81,15 +89,20 @@ public class HomeController {
    * @return 三个令牌
    */
   @PostMapping("login")
-  public ApiResponse login(HttpServletResponse response, @RequestBody LoginVo loginVo){
+  public ApiResponse login(HttpServletResponse response, @RequestBody @Validated LoginVo loginVo){
     String email = loginVo.getEmail();
     String password = loginVo.getPassword();
     Assert.notNull(email,"邮箱不能为空");
     Assert.notNull(password,"密码不能为空");
-    UserDto userDto = userService.selectUser(email);
+    UserDto userDto = userService.selectUser(email,loginVo.getOfficeId());
     if(userDto == null) {
       return new ApiResponse(ApiCode.UNKNOWN_ACCOUNT);
     }
+    // 判断用户状态：1刚注册未审核 2审核不通过 3审核通过
+    if(userDto.getState() != 3){
+      return new ApiResponse(ApiCode.USER_AUDIT_NOT_PASSED);
+    }
+    // 判断hash后的密码正确与否
     String password_encode = passwordHelper.hashPassword(password,userDto.getSalt());
     if(password_encode.equals(userDto.getPassword())) {
       // 登录成功，发放令牌，并保存 RefreshToken 以及 secret 于 Redis
@@ -257,11 +270,38 @@ public class HomeController {
     return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
   }
 
+  /**
+   * 用户注册.
+   * @param userRegisterVo 用户信息
+   * @return 注册成功的用户id
+   */
   @PostMapping("/register")
-  public ApiResponse register(@RequestBody UserDto userDto){
+  public ApiResponse register(@RequestBody @Validated UserRegisterVo userRegisterVo){
+    // 参数校验 先判断邮箱是否已经注册过了
+    UserDto userDto = userService.selectUser(userRegisterVo.getEmail(),userRegisterVo.getOfficeId());
+    if(userDto != null){
+      // 已经注册过了
+      return new ApiResponse(ApiCode.ALREADY_REGISTERED);
+    }
+    // 密码设置
+    PasswordHelper passwordHelper = new PasswordHelper();
+    Map<String, String> map;
+    map = passwordHelper.createPassword(userRegisterVo.getPassword());
+    String salt = map.get("salt");
+    String password = map.get("password");
+    // 构造用户
     User user = new User();
-    modelMapper.map(userDto,user);
+    modelMapper.map(userRegisterVo,user);
+    user.setPassword(password);
+    user.setSalt(salt);
     userService.save(user);
-    return new ApiResponse(user.getId());
+    // 构造用户的角色
+    UserRole userRole = new UserRole();
+    userRole.setRolId(userRegisterVo.getRoleId());
+    userRole.setOfficeId(userRegisterVo.getOfficeId());
+    userRole.setState(1);
+    userRole.setUseId(user.getId());
+    userRoleService.save(userRole);
+    return new ApiResponse(ApiCode.OK,user.getId());
   }
 }

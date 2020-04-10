@@ -18,7 +18,20 @@ public interface UserService extends IService<User> {
 
   public ApiResponse insertUser(UserDto userDto);
 
+  /**
+   * 全库搜索，存在问题.
+   * @param email 邮箱
+   * @return 用户
+   */
   public UserDto selectUser(String email);
+
+  /**
+   * 检察院下，所有邮箱.
+   * @param email 邮箱
+   * @param officeId 检察院 id
+   * @return
+   */
+  public UserDto selectUser(String email, String officeId);
 
   public UserDto selectUserById(String id);
 

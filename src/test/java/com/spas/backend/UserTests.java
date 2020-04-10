@@ -44,9 +44,9 @@ public class UserTests {
 //    log.info(String.valueOf(update));
   }
 
-//  @Test
+  @Test
   void selectUser() {
-    UserDto userDto = userMapper.selectUserByEmail("handy1998@qq.com");
-    System.out.println(userDto);
+    UserDto userDto = userMapper.selectUserByEmail("handy199@qq.com");
+    System.out.println(userDto == null);
   }
 }
