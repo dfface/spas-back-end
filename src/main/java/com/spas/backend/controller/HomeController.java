@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.UserDto;
+import com.spas.backend.entity.Login;
+import com.spas.backend.entity.Logout;
 import com.spas.backend.entity.User;
 import com.spas.backend.entity.UserRole;
 import com.spas.backend.service.UserRoleService;
@@ -12,6 +14,7 @@ import com.spas.backend.service.UserService;
 import com.spas.backend.util.JWTHelper;
 import com.spas.backend.util.PasswordHelper;
 import com.spas.backend.util.JSONData;
+import com.spas.backend.util.UserAgentHelper;
 import com.spas.backend.vo.LoginVo;
 import com.spas.backend.vo.UserRegisterVo;
 import com.spas.backend.vo.UserVo;
@@ -22,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.Assert;
@@ -32,6 +36,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -62,10 +67,16 @@ public class HomeController {
   @Value("${user.cookie.refresh}")
   private String cookieName;
 
+  @Value("${user.cookie.domain}")
+  private String domainName;
+
   private StringRedisTemplate redisTemplate;
 
   @Resource
   private UserRoleService userRoleService;
+
+  @Resource
+  private MongoTemplate mongoTemplate;
 
   @Autowired
   public void setRedisTemplate(StringRedisTemplate redisTemplate) {
@@ -89,7 +100,7 @@ public class HomeController {
    * @return 三个令牌
    */
   @PostMapping("login")
-  public ApiResponse login(HttpServletResponse response, @RequestBody @Validated LoginVo loginVo){
+  public ApiResponse login(HttpServletRequest request, HttpServletResponse response, @RequestBody @Validated LoginVo loginVo){
     String email = loginVo.getEmail();
     String password = loginVo.getPassword();
     Assert.notNull(email,"邮箱不能为空");
@@ -119,12 +130,14 @@ public class HomeController {
       userInfo.put("secret",userDto.getPassword());
       // 将 RefreshToken 设置为 Cookie
       Cookie cookie = new Cookie(cookieName,refreshToken);
+      cookie.setDomain(domainName);
       cookie.setHttpOnly(true);
       cookie.setMaxAge(refreshExpire*60); // 以秒为单位
 //      cookie.setSecure(true);
       response.addCookie(cookie);
       // 将 isLogged 设置为 Cookie
       Cookie cookieLogged = new Cookie("isLogged","true");
+      cookieLogged.setDomain(domainName);
       cookieLogged.setMaxAge(refreshExpire*60);  // 一不小心写成了 cookie ！
       response.addCookie(cookieLogged);
       // 将 userInfo 存储到 Redis 中
@@ -134,6 +147,14 @@ public class HomeController {
       valueOperations.set(userDto.getId(), JSON.toJSONString(userInfo),refreshExpire, TimeUnit.MINUTES);
       // 去除 RefreshToken 之后返回
       token.remove("refreshToken");
+      // 添加 MongoDB 日志
+      Login login = new Login();
+      login.setIp(UserAgentHelper.getIp(request));
+      login.setUserAgent(UserAgentHelper.getBrowserName(request));
+      login.setOsName(UserAgentHelper.getOsName(request));
+      login.setUid(userDto.getId());
+      login.setTime(LocalDateTime.now());
+      mongoTemplate.save(login);
       return new ApiResponse(ApiCode.LOGIN_SUCCESS,token);
     }
     else {
@@ -303,5 +324,57 @@ public class HomeController {
     userRole.setUseId(user.getId());
     userRoleService.save(userRole);
     return new ApiResponse(ApiCode.OK,user.getId());
+  }
+
+  /**
+   * 通过传入 userId 与 refreshToken 来退出用户
+   * @param request
+   * @param response
+   * @param userId
+   * @return
+   */
+  @GetMapping("/logout/{userId}")
+  public ApiResponse logout(HttpServletRequest request, HttpServletResponse response, @PathVariable String userId){
+    // 判断 userId 的合法性 由于 UUID，事实上是单数据库唯一
+    UserDto userDto = userService.selectUserById(userId);
+    if(userDto == null){
+      return new ApiResponse(ApiCode.UNKNOWN_ACCOUNT);
+    }
+    // 判断 refreshToken 是否正确
+    String userInfo = redisTemplate.opsForValue().get(userId);
+    if(userInfo == null){
+      return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
+    }
+    HashMap<String,String> userInfoParsed = JSON.parseObject(userInfo, JSONData.class);
+    String userRefreshToken = userInfoParsed.get("refreshToken");
+    Cookie[] cookies = request.getCookies();
+    for(Cookie cookie : cookies){
+      if(cookie.getValue().equals(userRefreshToken)){
+        // 执行登出操作
+        redisTemplate.opsForValue().set(userId,"",1, TimeUnit.MICROSECONDS);
+        Cookie refresh = new Cookie(cookieName,null);
+        refresh.setDomain(domainName);
+        refresh.setHttpOnly(true);
+        refresh.setPath("/");  // 重要
+        refresh.setMaxAge(0);  // 以秒为单位，0则表示立即删除
+        response.addCookie(refresh);
+        Cookie isLogged = new Cookie("isLogged",null);
+        isLogged.setDomain(domainName);
+        isLogged.setHttpOnly(false);
+        isLogged.setMaxAge(0);
+        isLogged.setPath("/");
+        response.addCookie(isLogged);
+        // MongoDB 写入日志
+        Logout logout = new Logout();
+        logout.setUid(userId);
+        logout.setIp(UserAgentHelper.getIp(request));
+        logout.setOsName(UserAgentHelper.getOsName(request));
+        logout.setUserAgent(UserAgentHelper.getBrowserName(request));
+        logout.setTime(LocalDateTime.now());
+        mongoTemplate.save(logout);
+        return new ApiResponse(ApiCode.LOGOUT_SUCCESS);
+      }
+    }
+    return new ApiResponse(ApiCode.LOGOUT_FAILED);
   }
 }

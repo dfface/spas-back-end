@@ -24,13 +24,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'  // redis
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'  // mail
     implementation 'org.springframework.boot:spring-boot-starter-quartz'  // quartz
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'  // validation
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // web
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2'  // mybatis
-    implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis' // redis-session
     runtimeOnly 'mysql:mysql-connector-java'
     compileOnly('org.projectlombok:lombok')
     annotationProcessor 'org.projectlombok:lombok'
@@ -55,6 +55,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf') // Thymeleaf
     implementation 'com.auth0:java-jwt:3.10.1'  // auth0 JWT
     implementation 'com.alibaba:fastjson:1.2.61'  // fast json
+    implementation 'eu.bitwalker:UserAgentUtils:1.21'  // user agent
 }
 
 test {

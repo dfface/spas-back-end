@@ -21,6 +21,8 @@ public enum ApiCode {
   INCORRECT_CREDENTIALS(206,"密码错误"),
   ALREADY_REGISTERED(207, "该邮箱已经注册过了"),
   USER_AUDIT_NOT_PASSED(208, "用户审核未通过"),
+  LOGOUT_SUCCESS(209,"登出成功"),
+  LOGOUT_FAILED(210,"登出失败"),
   // 3XX 业务相关码
   UNAUDITED(301,"未经审核"),
 
@@ -34,9 +36,9 @@ public enum ApiCode {
   NULL_POINTER(902,"空指针异常"),
   UNAUTHORIZED(903,"无权访问");
   @Getter
-  private  int index;
+  private final int index;
   @Getter
-  private  String msg;
+  private final String msg;
 
   ApiCode(int i, String s) {
     this.index = i;

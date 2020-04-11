@@ -16,7 +16,7 @@ public class MailTests {
   @Resource
   private EmailHelper emailHelper;
 
-  @Test
+//  @Test
   public void sendSuggestion() {
     Map<String,Object> valueMap = new HashMap<>();
     LocalDateTime localDateTime = LocalDateTime.now();

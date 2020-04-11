@@ -42,8 +42,6 @@ public class User implements Serializable {
 
   private String email;
 
-  private String departmentId;
-
   private String officeId;
 
   private LocalDateTime createTime;

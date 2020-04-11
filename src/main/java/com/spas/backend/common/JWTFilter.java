@@ -47,7 +47,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     // 这个对象中封装了向客户端发送数据、发送响应头，发送响应状态码的方法。
     HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
 //    // 设置跨域支持
-    httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");  // httpServletRequest.getHeader("Origin")  不能是 *（所有来源），否则 credential 失效
+    httpServletResponse.setHeader("Access-Control-Allow-Origin", CROSOrigin);  // httpServletRequest.getHeader("Origin")  不能是 *（所有来源），否则 credential 失效
     httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true"); //true代表允许携带cookie
     httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
     httpServletResponse.setHeader("Access-Control-Allow-Headers",httpServletRequest.getHeader("Access-Control-Request-Headers"));
