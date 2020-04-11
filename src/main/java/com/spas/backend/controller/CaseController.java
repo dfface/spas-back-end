@@ -6,17 +6,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
+import com.spas.backend.entity.SuggestionUser;
 import com.spas.backend.entity.Cases;
-import com.spas.backend.service.CaseService;
+import com.spas.backend.service.*;
 import com.spas.backend.vo.CaseOutlineVo;
-import com.spas.backend.vo.CaseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,6 +82,11 @@ public class CaseController {
     return new ApiResponse(ApiCode.OK,caseService.updateState(id,state,opinion));
   }
 
+  /**
+   * 修改案件信息.
+   * @param data 案件信息
+   * @return
+   */
   @PostMapping("/revise")
   public ApiResponse revise(@RequestBody Cases data){
     // 参数校验

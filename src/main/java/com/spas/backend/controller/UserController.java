@@ -44,6 +44,7 @@ public class UserController {
   }
 
   @PostMapping("/add")
+  @ApiOperation("添加用户")
   public ApiResponse add(UserDto userDto){
     return userService.insertUser(userDto);
   }

@@ -25,7 +25,6 @@ public enum ApiCode {
   LOGOUT_FAILED(210,"登出失败"),
   // 3XX 业务相关码
   UNAUDITED(301,"未经审核"),
-
   ACCESS_TOKEN_EXPIRED(505,"访问令牌过期"),
   ALGORITHM_MISMATCH(601,"令牌中的算法不匹配"),
   SIGNATURE_INVALID(602,"令牌签名无效"),

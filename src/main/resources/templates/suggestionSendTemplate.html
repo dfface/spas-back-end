@@ -116,7 +116,7 @@
         <h2 class="text-center">检察建议送达通知</h2>
         <p th:text="|${government} : |"></p>
         <p th:text="${suggestion}"></p>
-        <div class="alert alert-danger" role="alert"><span th:utext="|<strong>注意</strong> 请在收到通知后，&nbsp; ${deadline} &nbsp;时限内回复。请立即访问检察建议流程辅助办案系统，注册并登录，通过密码关联案件，以获取更多有效信息。|"></span></div>
+        <div class="alert alert-danger" role="alert"><span th:utext="|<strong>注意</strong> 请在收到通知后，&nbsp; ${deadline} &nbsp;时限内回复。请立即访问检察建议流程辅助办案系统，注册并登录，通过密码关联此检察建议，以获取更多有效信息。|"></span></div>
         <div class="card">
             <div class="card-body">
                 <p class="card-text" th:text="|关联密码：${secret}|"></p>

@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "Case对象", description = "案件实体")
+@ApiModel(value = "Cases对象", description = "案件实体")
 public class Cases implements Serializable {
 
   private static final long serialVersionUID = 1L;
