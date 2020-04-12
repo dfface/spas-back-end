@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spas.backend.entity.SuggestionUser;
 import com.spas.backend.mapper.SuggestionUserMapper;
 import com.spas.backend.service.SuggestionUserService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 
+@Service
 public class SuggestionUserServiceImpl extends ServiceImpl<SuggestionUserMapper, SuggestionUser> implements SuggestionUserService {
 
   @Resource

@@ -1,11 +1,13 @@
 package com.spas.backend.vo;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@ApiModel(value = "SuggestionVo 实体", description = "检察建议大纲返回内容")
 public class SuggestionVo implements Serializable {
 
   private static final long serialVersionUID = 1L;

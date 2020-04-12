@@ -48,8 +48,14 @@ public class ReportController {
     // 参数校验
     Report report = new Report();
     modelMapper.map(reportDto,report);
+    report.setState(2);  // 表示已回复，等待评价
     reportService.save(report);
     return new ApiResponse(ApiCode.OK, report.getId());
+  }
+
+  @GetMapping("/detail/{id}")
+  public ApiResponse detail(@PathVariable String id){
+    return new ApiResponse(ApiCode.OK,reportService.getById(id));
   }
 
   /**
@@ -67,11 +73,21 @@ public class ReportController {
         .set("score",reportJudgeDto.getScore())
         .set("state",2);  // 表示已经评价过
     reportService.update(updateWrapper);
-    // 更改检察建议状态
     Report report = reportService.getById(reportJudgeDto.getId());
     UpdateWrapper<Suggestion> suggestionUpdateWrapper = new UpdateWrapper<>();
-    suggestionUpdateWrapper.eq("id",report.getSuggestionId())
-        .set("state",2);  // 表示已经回复过
+    // 更改检察建议状态
+    if(reportJudgeDto.getNextState() == 3) {  // 等待新一轮报告
+      suggestionUpdateWrapper.eq("id",report.getSuggestionId())
+          .set("state",3);  // 表示继续等待回复
+    }
+    else if(reportJudgeDto.getNextState() == 2){
+      suggestionUpdateWrapper.eq("id",report.getSuggestionId())
+          .set("state",5);  // 表示已经回复过，准备起诉
+    }
+    else if(reportJudgeDto.getNextState() == 1){
+      suggestionUpdateWrapper.eq("id",report.getSuggestionId())
+          .set("state",4);  // 表示整改完成
+    }
     suggestionService.update(suggestionUpdateWrapper);
     return new ApiResponse(ApiCode.OK);
   }

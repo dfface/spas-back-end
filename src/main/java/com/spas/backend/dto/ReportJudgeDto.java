@@ -17,5 +17,5 @@ public class ReportJudgeDto implements Serializable {
 
   private Double score;
 
-  private Integer state;
+  private Integer nextState;
 }

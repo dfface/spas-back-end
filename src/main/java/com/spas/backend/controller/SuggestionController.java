@@ -2,6 +2,7 @@ package com.spas.backend.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
@@ -178,6 +179,33 @@ public class SuggestionController {
       }
     }
     return new ApiResponse(ApiCode.OK,suggestionVoList);
+  }
+
+  /**
+   * 行政单位人员，回复检察建议历史.
+   * @param userId 用户id
+   * @param current 当前页
+   * @return OK, List SuggestionVo
+   */
+  @GetMapping("/replyHistory/{userId}/{current}")
+  @ApiOperation("回复过的检察建议历史")
+  public ApiResponse replyHistory(@PathVariable String userId, @PathVariable long current){
+    QueryWrapper<SuggestionUser> suggestionUserQueryWrapper = new QueryWrapper<>();
+    suggestionUserQueryWrapper.eq("use_id",userId);
+    IPage<SuggestionUser> suggestionUserIPage = suggestionUserService.page(new Page<SuggestionUser>(current,Integer.parseInt(pageSize)),suggestionUserQueryWrapper);
+    List<SuggestionUser> suggestionUserList = suggestionUserIPage.getRecords();
+    List<SuggestionVo> suggestionVoList = new ArrayList<>();
+    Map<String, Object> map = new HashMap<>();
+    map.put("count",suggestionUserIPage.getPages());
+    map.put("current",suggestionUserIPage.getCurrent());
+    for(SuggestionUser suggestionUser : suggestionUserList){
+      Suggestion suggestion = suggestionService.getById(suggestionUser.getSugId());
+      SuggestionVo suggestionVo = new SuggestionVo();
+      modelMapper.map(suggestion,suggestionVo);
+      suggestionVoList.add(suggestionVo);
+    }
+    map.put("content",suggestionVoList);
+    return new ApiResponse(ApiCode.OK,map);
   }
 
 }
