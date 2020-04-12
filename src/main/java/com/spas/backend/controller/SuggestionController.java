@@ -166,17 +166,52 @@ public class SuggestionController {
     if(officeService.getById(officeId) == null){
       return new ApiResponse(ApiCode.ILLEGAL_ARGUMENT);
     }
-    // 查询关联的检察建议
-    List<SuggestionUser> suggestionUserList = suggestionUserService.selectSuggestionUser(userId,officeId);
+    // 查询关联的检察建议 且 检察建议 状态为1或者3
+    QueryWrapper<SuggestionUser> suggestionUserQueryWrapper = new QueryWrapper<>();
+    suggestionUserQueryWrapper.eq("use_id",userId)
+        .eq("office_id",officeId);
+    List<SuggestionUser> suggestionUserList = suggestionUserService.list(suggestionUserQueryWrapper);
     Assert.notNull(suggestionUserList);
     List<SuggestionVo> suggestionVoList = new ArrayList<>();
     for(SuggestionUser suggestionUser : suggestionUserList){
       Suggestion suggestion = suggestionService.select(suggestionUser.getSugId());
-      if(suggestion.getState() == 1){
+      if(suggestion.getState() == 1 || suggestion.getState() == 3){  // 1等待回复 2等待下一轮回复
         SuggestionVo suggestionVo = new SuggestionVo();
         modelMapper.map(suggestion,suggestionVo);
         suggestionVoList.add(suggestionVo);
       }
+    }
+    return new ApiResponse(ApiCode.OK,suggestionVoList);
+  }
+
+  /**
+   * 检察官查看自己发送的检察建议需要处理的有哪些.
+   * @param userId 检察官id
+   * @param officeId 检察院id
+   * @return List SuggestionVo
+   */
+  @GetMapping("/waitingReply/{userId}/{officeId}")
+  @ApiOperation("检察官查看自己发送的检察建议需要处理的有哪些")
+  public ApiResponse waitingReply(@PathVariable String userId, @PathVariable String officeId){
+    if(userService.selectUserById(userId) == null){
+      return new ApiResponse(ApiCode.UNKNOWN_ACCOUNT);
+    }
+    if(officeService.getById(officeId) == null){
+      return new ApiResponse(ApiCode.ILLEGAL_ARGUMENT);
+    }
+    // 查询自己发出的检察建议，且状态在1和3
+    QueryWrapper<Suggestion> suggestionQueryWrapper = new QueryWrapper<>();
+    suggestionQueryWrapper.eq("creator_id",userId)
+        .eq("office_id",officeId)
+        .eq("state",1)
+        .or().eq("state",3)
+        .or().eq("state",2);  // 等待评价
+    List<Suggestion> suggestionList = suggestionService.list(suggestionQueryWrapper);
+    List<SuggestionVo> suggestionVoList = new ArrayList<>();
+    for (Suggestion suggestion : suggestionList) {
+      SuggestionVo suggestionVo = new SuggestionVo();
+      modelMapper.map(suggestion,suggestionVo);
+      suggestionVoList.add(suggestionVo);
     }
     return new ApiResponse(ApiCode.OK,suggestionVoList);
   }

@@ -1,20 +1,28 @@
 package com.spas.backend.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.ReportDto;
 import com.spas.backend.dto.ReportJudgeDto;
 import com.spas.backend.entity.Report;
 import com.spas.backend.entity.Suggestion;
+import com.spas.backend.service.OfficeService;
 import com.spas.backend.service.ReportService;
 import com.spas.backend.service.SuggestionService;
+import com.spas.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -32,10 +40,19 @@ public class ReportController {
   private ReportService reportService;
 
   @Resource
+  private UserService userService;
+
+  @Resource
+  private OfficeService officeService;
+
+  @Resource
   private SuggestionService suggestionService;
 
   @Resource
   private ModelMapper modelMapper;
+
+  @Value("${user.page.size}")
+  private long pageSize;
 
   /**
    * 新建整改报告.
@@ -48,11 +65,21 @@ public class ReportController {
     // 参数校验
     Report report = new Report();
     modelMapper.map(reportDto,report);
-    report.setState(2);  // 表示已回复，等待评价
+    report.setState(1);  // 表示报告等待评价
     reportService.save(report);
+    // 修改对应检察建议的状态为2 表示检察建议已经被回复，需要评价报告
+    UpdateWrapper<Suggestion> suggestionUpdateWrapper = new UpdateWrapper<>();
+    suggestionUpdateWrapper.set("state",2)
+        .eq("id",reportDto.getSuggestionId());
+    suggestionService.update(suggestionUpdateWrapper);
     return new ApiResponse(ApiCode.OK, report.getId());
   }
 
+  /**
+   * 查看整改报告细节.
+   * @param id 报告id
+   * @return Report
+   */
   @GetMapping("/detail/{id}")
   public ApiResponse detail(@PathVariable String id){
     return new ApiResponse(ApiCode.OK,reportService.getById(id));
@@ -106,6 +133,27 @@ public class ReportController {
     report.setId(id);
     reportService.updateById(report);
     return new ApiResponse(ApiCode.OK);
+  }
+
+  /**
+   * 行政机关人员查看自己提交的一些整改报告
+   * @param userId 用户id
+   * @param current 当前页面
+   * @return Report List Page
+   */
+  @GetMapping("/history/{userId}/{current}")
+  public ApiResponse history(@PathVariable String userId,@PathVariable Integer current){
+    if(userService.selectUserById(userId) == null){
+      return new ApiResponse(ApiCode.UNKNOWN_ACCOUNT);
+    }
+    QueryWrapper<Report> reportQueryWrapper = new QueryWrapper<>();
+    reportQueryWrapper.eq("creator_id",userId);
+    IPage<Report> reportIPage = reportService.page(new Page<>(current,pageSize),reportQueryWrapper);
+    Map<String,Object> map = new HashMap<>();
+    map.put("count",reportIPage.getPages());
+    map.put("current",reportIPage.getCurrent());
+    map.put("content",reportIPage.getRecords());
+    return new ApiResponse(ApiCode.OK,map);
   }
 
 }
