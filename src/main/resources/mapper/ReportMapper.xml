@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spas.backend.mapper.ReportMapper">
-
+    <select id="selectReportBySuggestionCreatedByProcurator" resultType="com.spas.backend.entity.Report">
+        SELECT r.* FROM report r
+        LEFT JOIN suggestion s
+        ON r.suggestion_id = s.id
+        WHERE s.creator_id = #{procuratorId} AND s.state = #{state}
+        AND r.is_deleted = b'0' OR r.is_deleted = null
+        AND s.is_deleted = b'0' OR s.is_deleted = null
+    </select>
+    <select id="selectReportBySuggestionEvaluatedByProcurator" resultType="com.spas.backend.entity.Report">
+        SELECT r.* FROM report r
+        LEFT JOIN suggestion s
+        ON r.suggestion_id = s.id
+        WHERE s.creator_id = #{procuratorId} AND r.state = 2
+            AND r.is_deleted = b'0' OR r.is_deleted = null
+            AND s.is_deleted = b'0' OR s.is_deleted = null
+    </select>
 </mapper>

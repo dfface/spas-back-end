@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,8 +82,22 @@ public class ReportController {
    * @return Report
    */
   @GetMapping("/detail/{id}")
+  @ApiOperation("查看整改报告细节")
   public ApiResponse detail(@PathVariable String id){
     return new ApiResponse(ApiCode.OK,reportService.getById(id));
+  }
+
+  /**
+   * 检察官查看需要评价的整改报告有哪些.
+   * @param userId 检察官id
+   * @return List Report
+   */
+  @GetMapping("/evaluating/{userId}")
+  @ApiOperation("检察官查看需要评价的整改报告有哪些")
+  public ApiResponse evaluating(@PathVariable String userId){
+    // 搜索自己发出的检察建议， 状态为2，才是等待评价的
+    // join Report suggestion_id
+    return new ApiResponse(ApiCode.OK,reportService.selectReportBySuggestionCreatedByProcurator(userId,2));
   }
 
   /**
@@ -149,6 +164,24 @@ public class ReportController {
     QueryWrapper<Report> reportQueryWrapper = new QueryWrapper<>();
     reportQueryWrapper.eq("creator_id",userId);
     IPage<Report> reportIPage = reportService.page(new Page<>(current,pageSize),reportQueryWrapper);
+    return getApiResponse(reportIPage);
+  }
+
+  /**
+   * 检察官查看自己已经评价过的报告历史
+   * @param userId 用户id
+   * @param current 当前页面
+   * @return OK，List Report
+   */
+  @GetMapping("/evaluateHistory/{userId}/{current}")
+  @ApiOperation("检察官查看自己已经评价过的报告历史")
+  public ApiResponse evaluateHistory(@PathVariable String userId,@PathVariable Integer current){
+    // 先查找检察官的suggestion 状态没有影响 ，再查看报告 state 要为 2
+    IPage<Report> reportIPage = reportService.selectReportBySuggestionEvaluatedByProcurator(new Page<>(current,pageSize),userId);
+    return getApiResponse(reportIPage);
+  }
+
+  private ApiResponse getApiResponse(IPage<Report> reportIPage) {
     Map<String,Object> map = new HashMap<>();
     map.put("count",reportIPage.getPages());
     map.put("current",reportIPage.getCurrent());
