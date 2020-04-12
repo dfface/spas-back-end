@@ -135,7 +135,7 @@ public class ReportController {
   }
 
   /**
-   * 修改整改报告.
+   * 修改整改报告(已经评价的报告不允许修改).
    * @param reportDto 报告信息
    * @param id 报告id
    * @return OK
@@ -143,11 +143,16 @@ public class ReportController {
   @PostMapping("/revise/{id}")
   @ApiOperation("修改整改报告")
   public ApiResponse revise(@RequestBody ReportDto reportDto, @PathVariable String id){
+    // 已经评价过的报告不许再更改
+    Report oldReport = reportService.getById(id);
+    if(oldReport.getState() == 2){
+      return new ApiResponse(ApiCode.REPORT_HAS_BEEN_JUDGED);
+    }
     Report report = new Report();
     modelMapper.map(reportDto,report);
     report.setId(id);
     reportService.updateById(report);
-    return new ApiResponse(ApiCode.OK);
+    return new ApiResponse(ApiCode.OK,id);
   }
 
   /**
