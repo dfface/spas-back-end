@@ -72,7 +72,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     modelMapper.map(userDto,userVo);
     Office office = officeMapper.selectById(userDto.getOfficeId());
     userVo.setOfficeUrl(office.getUrl());
-    userVo.setOfficeEmail(office.getEmail());
     userVo.setOfficeName(office.getName());
     return userVo;
   }

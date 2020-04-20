@@ -25,8 +25,6 @@ public class UserVo implements Serializable {
 
   private String officeUrl;
 
-  private String officeEmail;
-
   // 增加用户角色
   private Set<String> roles;
 

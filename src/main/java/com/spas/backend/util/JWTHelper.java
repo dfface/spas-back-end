@@ -169,7 +169,6 @@ public class JWTHelper {
           .withClaim("email",userVo.getEmail())
           .withClaim("officeUrl",userVo.getOfficeUrl())
           .withClaim("officeId",userVo.getOfficeId())
-          .withClaim("officeEmail",userVo.getOfficeEmail())
           .withClaim("officeName",userVo.getOfficeName())
           .sign(algorithm);
     } catch (JWTCreationException e) {

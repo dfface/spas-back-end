@@ -58,7 +58,6 @@ class BackEndApplicationTests {
     Office office = new Office();
     office.setName("扬州市人民检察院");
     office.setUrl("http://yc.hbjc.gov.cn/");
-    office.setEmail("yuhan@wwpjw.net");
     officeMapper.insert(office);
     System.out.println("id:" + office.getId());
   }
