@@ -74,4 +74,17 @@
             AND ro.is_deleted = b'0' OR ro.is_deleted = null
             AND o.is_deleted = b'0' OR o.is_deleted = null
     </select>
+    <update id="updateUserByUserOutlineVo" parameterType="com.spas.backend.vo.UserOutlineVo">
+        UPDATE `user` set
+            name = #{userOutlineVo.name},
+            position = #{userOutlineVo.position},
+            email = #{userOutlineVo.email},
+            state = #{userOutlineVo.state}
+        WHERE id = #{userOutlineVo.id}
+    </update>
+    <select id="selectUserOutlineVoByOfficeIdToPage" resultType="com.spas.backend.vo.UserOutlineVo">
+        SELECT id, name, position, email, state FROM user
+        WHERE office_id = #{officeId} AND is_deleted = b'0'
+        ORDER BY create_time DESC
+    </select>
 </mapper>

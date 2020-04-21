@@ -80,7 +80,7 @@ public class SuggestionController {
       valueMap.put("government",suggestionDto.getSupervisedName());
       valueMap.put("suggestion",suggestionDto.getContent());
       valueMap.put("deadline",suggestionDto.getDeadline().format(formatter));
-      valueMap.put("secret",suggestionDto.getCaseId());
+      valueMap.put("secret",suggestionDto.getId());  // 密码应是检察建议的id
       valueMap.put("url","https://www.spas.com");  // 待定
       // 查询检察院名字
       Office office = officeService.select(suggestionDto.getOfficeId());

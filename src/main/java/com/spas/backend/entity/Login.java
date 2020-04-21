@@ -7,6 +7,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Login 日志实体.
+ */
 @Data
 public class Login implements Serializable {
 

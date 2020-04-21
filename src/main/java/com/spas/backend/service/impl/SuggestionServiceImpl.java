@@ -26,8 +26,8 @@ public class SuggestionServiceImpl extends ServiceImpl<SuggestionMapper, Suggest
   private SuggestionMapper suggestionMapper;
 
   @Override
-  public int newSuggestion(Suggestion suggestion) {
-    return suggestionMapper.insert(suggestion);
+  public void newSuggestion(Suggestion suggestion) {
+    suggestionMapper.insert(suggestion);
   }
 
   @Override

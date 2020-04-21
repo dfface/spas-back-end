@@ -5,6 +5,9 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Set;
 
+/**
+ * 仅用于注册用户.
+ */
 @Data
 public class UserDto implements Serializable {
 

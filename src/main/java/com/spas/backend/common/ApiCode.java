@@ -26,8 +26,11 @@ public enum ApiCode {
   // 3XX 业务相关码
   UNAUDITED(301,"未经审核"),
   REPORT_HAS_BEEN_JUDGED(302,"已经被评价过的报告不许修改"),
-
-  ACCESS_TOKEN_EXPIRED(505,"访问令牌过期"),
+  OFFICE_DELETE_FAILED(303,"检察院不能被删除，因为还有用户使用"),
+  OFFICE_NOT_FOUND(304,"未注册的检察院"),
+  USER_DELETE_FAILED(305, "用户不能被删除，因为还有与之相关的案件等"),
+  USER_STATE_FAILED(306,"用户状态更改失败"),
+  // 6XX 令牌相关码
   ALGORITHM_MISMATCH(601,"令牌中的算法不匹配"),
   SIGNATURE_INVALID(602,"令牌签名无效"),
   TOKEN_EXPIRED(603,"令牌过期"),

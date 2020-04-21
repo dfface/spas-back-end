@@ -1,6 +1,7 @@
 package com.spas.backend.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.UserDto;
 import com.spas.backend.entity.Office;
@@ -10,6 +11,7 @@ import com.spas.backend.mapper.UserMapper;
 import com.spas.backend.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spas.backend.util.PasswordHelper;
+import com.spas.backend.vo.UserOutlineVo;
 import com.spas.backend.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -51,6 +53,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     modelMapper.map(userDto, user);
     user.setPassword(map.get("password"));
     user.setSalt(map.get("salt"));
+    user.setState(1);  // 刚注册的状态
     userMapper.insert(user);
     return new ApiResponse();
   }
@@ -79,5 +82,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
   @Override
   public UserDto selectUser(String email, String officeId) {
     return userMapper.selectUserByEmailAndOfficeId(email, officeId);
+  }
+
+  @Override
+  public void updateUserByUserOutlineVo(UserOutlineVo userOutlineVo) {
+    userMapper.updateUserByUserOutlineVo(userOutlineVo);
+  }
+
+  @Override
+  public IPage<UserOutlineVo> selectUserOutlineVoByOfficeIdToPage(Page<?> page, String officeId) {
+    return userMapper.selectUserOutlineVoByOfficeIdToPage(page,officeId);
   }
 }

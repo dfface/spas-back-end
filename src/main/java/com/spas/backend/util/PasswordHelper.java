@@ -17,14 +17,14 @@ import java.util.Map;
  */
 @Component
 public class PasswordHelper {
-  private RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
+  private final RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
   public static final String ALGORITHM = "SHA-256";
   public static final int HASH_ITERATIONS = 2; // 散列次数
 
   /**
    * 生成密码和盐值.
-   * @param password
-   * @return
+   * @param password 密码
+   * @return 密码和盐值的字典
    */
   public Map<String, String> createPassword(String password){
     String salt = randomNumberGenerator.nextBytes().toHex();
@@ -38,9 +38,9 @@ public class PasswordHelper {
 
   /**
    * 将原始密码和盐值一起Hash.
-   * @param salt
-   * @param password
-   * @return
+   * @param salt 盐值
+   * @param password 密码
+   * @return Hash 后的结果
    */
   public String hashPassword(String password, String salt) {
     return new SimpleHash(ALGORITHM, password,
