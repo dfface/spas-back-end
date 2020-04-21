@@ -7,16 +7,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.entity.Office;
+import com.spas.backend.entity.Role;
 import com.spas.backend.entity.User;
 import com.spas.backend.service.OfficeService;
+import com.spas.backend.service.RoleService;
 import com.spas.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -35,6 +36,9 @@ public class OfficeController {
 
   @Resource
   private UserService userService;
+
+  @Resource
+  private RoleService roleService;
 
   @Value("${user.page.size}")
   private String pageSize;
@@ -96,6 +100,21 @@ public class OfficeController {
     officeService.save(office);
     apiResponse.setMsg(office.getId());
     apiResponse.setCode(ApiCode.OK.getIndex());
+    // 新建的检察院的角色表都是固定的！因为就这么几个哈，还有啥，还有啥。操作表暂时没啥可用的，先放在这里。
+    Role roleA = new Role();
+    Role roleB = new Role();
+    Role roleC = new Role();
+    roleA.setCode("administrative_personnel");
+    roleA.setDescription("行政机关人员");
+    roleA.setOfficeId(office.getId());
+    roleB.setCode("chief_procurator");
+    roleB.setDescription("检察长");
+    roleB.setOfficeId(office.getId());
+    roleC.setCode("procurator");
+    roleC.setDescription("检察官");
+    roleC.setOfficeId(office.getId());
+    List<Role> roleList = Arrays.asList(roleA, roleB, roleC);
+    roleService.saveBatch(roleList);
     return apiResponse;
   }
 
