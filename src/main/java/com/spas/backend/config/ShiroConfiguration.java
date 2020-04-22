@@ -104,6 +104,7 @@ public class ShiroConfiguration {
    * @author Yuhan Liu
    * @date 2020-03-27
    */
+  @Bean  // 居然掉了这个东西！！！
   public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager) {
     ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
     // 添加自己的过滤器取名为jwt
@@ -130,9 +131,9 @@ public class ShiroConfiguration {
     filterChainDefinitionMap.put("/error", "anon");
     filterChainDefinitionMap.put("/refresh", "anon");
     // 注册接口放开
-    filterChainDefinitionMap.put("/office/all", "anon");
+    filterChainDefinitionMap.put("/offices/all", "anon");
     filterChainDefinitionMap.put("/register", "anon");
-    filterChainDefinitionMap.put("/role/all/**", "anon");
+    filterChainDefinitionMap.put("/roles/all/**", "anon");
     // 登出接口放开
     filterChainDefinitionMap.put("/logout/**", "anon");
     // 静态资源放开

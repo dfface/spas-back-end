@@ -46,10 +46,10 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
     // 这个对象中封装了向客户端发送数据、发送响应头，发送响应状态码的方法。
     HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
-//    // 设置跨域支持
-    httpServletResponse.setHeader("Access-Control-Allow-Origin", CROSOrigin);  // httpServletRequest.getHeader("Origin")  不能是 *（所有来源），否则 credential 失效
+    // 设置跨域支持
+    httpServletResponse.setHeader("Access-Control-Allow-Origin", httpServletRequest.getHeader("Origin"));  // httpServletRequest.getHeader("Origin")  不能是 *（所有来源），否则 credential 失效
     httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true"); //true代表允许携带cookie
-    httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+    httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE,PATCH");
     httpServletResponse.setHeader("Access-Control-Allow-Headers",httpServletRequest.getHeader("Access-Control-Request-Headers"));
     log.info("Origin: " + httpServletRequest.getHeader("Origin"));
     log.info("Access-Control-Request-Headers: " + httpServletRequest.getHeader("Access-Control-Request-Headers"));
@@ -103,7 +103,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 //    String authorization = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
     // 拿到当前Header中Authorization的AccessToken(Shiro中getAuthzHeader方法已经实现)
     JWTToken token = new JWTToken(getAuthzHeader(request));
-    log.info(getAuthzHeader(request).toString());
+    log.info("头信息：" + getAuthzHeader(request));
     // 提交给 realm 进行登录
     log.info("执行登录：提交给 realm 进行登录");
     getSubject(request, response).login(token);
@@ -169,4 +169,5 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
       return false;
     }
   }
+
 }
