@@ -44,24 +44,19 @@ public class OfficeController {
   private String pageSize;
 
   /**
-   * 用于登录时，查询所有的检察院.
-   * @return 所有检察院列表
-   */
-  @GetMapping("")
-  @ApiOperation("查询所有检察院")
-  public ApiResponse selectAll(){
-    return new ApiResponse(officeService.list());
-  }
-
-  /**
-   * 检察院管理，分页查询所有检察院信息.
+   * 检察院管理，分页查询所有检察院信息 / 以及登录时查询所有检察院.
    * @param current 当前页
    * @param size 每页大小
    * @return 所有检察院信息，以Page展示
    */
   @GetMapping("")
-  @ApiOperation("检察院管理，分页查询所有检察院信息")
+  @ApiOperation("检察院管理，分页查询所有检察院信息 / 以及登录时查询所有检察院")
   public ApiResponse selectAllByPage(@RequestParam long current, @RequestParam long size){
+    if(current == -1L){ // 约定 -1
+      // 表示直接全部返回
+      return new ApiResponse(officeService.list());
+    }
+    // 表示分页
     long pageSizeGet;
     if(size < 0){
       pageSizeGet = size;

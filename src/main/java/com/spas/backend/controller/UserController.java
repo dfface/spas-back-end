@@ -141,16 +141,8 @@ public class UserController {
     if(office == null){
       return new ApiResponse(ApiCode.OFFICE_NOT_FOUND);
     }
-    // 获取页面大小
-    long pageSizeGet;
-    if(size < 0){
-      pageSizeGet = Integer.valueOf(pageSize).longValue();
-    }
-    else{
-      pageSizeGet = size;
-    }
     IPage<UserRoleVo> userRoleVoIPage = userRoleService.selectRolesByOfficeId(
-       new Page<>(current,pageSizeGet),officeId
+       new Page<>(current,size),officeId
     );
     // 构造返回页面格式
     HashMap<String,Object> map = new HashMap<>();

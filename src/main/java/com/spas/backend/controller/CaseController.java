@@ -12,6 +12,7 @@ import com.spas.backend.service.*;
 import com.spas.backend.vo.CaseOutlineVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +58,7 @@ public class CaseController {
    */
   @PostMapping("/new")
   @ApiOperation("新建案件")
+  @RequiresRoles("procurator")
   public ApiResponse newCase(@RequestBody Cases cases) {
     // 参数校验(虽然前台已经足够充足)
     caseService.insertCase(cases);
@@ -73,6 +75,7 @@ public class CaseController {
    */
   @GetMapping("/handling/{id}")
   @ApiOperation("正在处理的案件，没审核、审核通过、审核不通过的")
+  @RequiresRoles("procurator")
   public ApiResponse handling(@PathVariable String id){
     // 参数校验
     return new ApiResponse(ApiCode.OK, caseService.selectOutline(id,1,2,3));
@@ -85,6 +88,7 @@ public class CaseController {
    */
   @GetMapping("/handlingAudited/{id}")
   @ApiOperation("正在处理的案件，已经通过审核，新建检察建议时会查询")
+  @RequiresRoles("procurator")
   public ApiResponse handlingAudited(@PathVariable String id){
     return new ApiResponse(ApiCode.OK, caseService.selectOutline(id,3));
   }
@@ -97,6 +101,7 @@ public class CaseController {
    */
   @GetMapping("/history/{id}/{current}")
   @ApiOperation("用户创建的案件的历史，分页查询")
+  @RequiresRoles("procurator")
   public ApiResponse history(@PathVariable String id, @PathVariable long current){
     // 参数校验
     IPage<CaseOutlineVo> caseOutlineVoIpage = caseService.selectOutlineAllByPage(id,new Page<CaseOutlineVo>(current, Integer.valueOf(pageSize).longValue()));
@@ -114,6 +119,7 @@ public class CaseController {
    */
   @GetMapping("/auditing/{id}")
   @ApiOperation("查询等待审核的案件（以检察院为单位）")
+  @RequiresRoles("procurator")
   public ApiResponse auditing(@PathVariable String id){
     // 参数校验
     return new ApiResponse(ApiCode.OK,caseService.selectOutlineAuditing(id));
@@ -128,6 +134,7 @@ public class CaseController {
    */
   @PostMapping("/auditing/{id}/{state}")
   @ApiOperation("案件审核，更新案件的状态、建议")
+  @RequiresRoles("procurator")
   public ApiResponse auditing(@PathVariable String id, @PathVariable Integer state, @RequestBody String opinion){
     // 参数校验
     return new ApiResponse(ApiCode.OK,caseService.updateState(id,state,opinion));
@@ -140,6 +147,7 @@ public class CaseController {
    */
   @PostMapping("/revise")
   @ApiOperation("修改案件信息")
+  @RequiresRoles("procurator")
   public ApiResponse revise(@RequestBody Cases data){
     // 参数校验
     return new ApiResponse(ApiCode.OK,caseService.updateById(data));
