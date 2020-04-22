@@ -320,7 +320,6 @@ public class HomeController {
     UserRole userRole = new UserRole();
     userRole.setRolId(userRegisterVo.getRoleId());
     userRole.setOfficeId(userRegisterVo.getOfficeId());
-    userRole.setState(1);
     userRole.setUseId(user.getId());
     userRoleService.save(userRole);
     return new ApiResponse(ApiCode.OK,user.getId());

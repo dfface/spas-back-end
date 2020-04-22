@@ -1,12 +1,10 @@
 package com.spas.backend.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.UserDto;
+import com.spas.backend.dto.UserRoleUpdateDto;
 import com.spas.backend.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.spas.backend.vo.UserOutlineVo;
 import com.spas.backend.vo.UserVo;
 
 /**
@@ -57,15 +55,7 @@ public interface UserService extends IService<User> {
 
   /**
    * 修改用户信息
-   * @param userOutlineVo userOutlineVo 用户基本信息
+   * @param userRoleUpdateDto userRoleUpdateDto 用户基本信息（含角色id数组）
    */
-  void updateUserByUserOutlineVo(UserOutlineVo userOutlineVo);
-
-  /**
-   * 通过officeId 分页查询所有用户.
-   * @param page 哪个页面
-   * @param officeId 检察院id
-   * @return 页面信息
-   */
-  IPage<UserOutlineVo> selectUserOutlineVoByOfficeIdToPage(Page<?> page, String officeId);
+  void updateUserByUserRoleUpdateDto(UserRoleUpdateDto userRoleUpdateDto);
 }

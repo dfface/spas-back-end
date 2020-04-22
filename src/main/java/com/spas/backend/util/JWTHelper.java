@@ -84,7 +84,7 @@ public class JWTHelper {
       Algorithm algorithm = Algorithm.HMAC256(userVo.getPassword());
       return JWT.create()
           .withKeyId(userVo.getId())
-          .withIssuer(siteUrl)
+          .withIssuer(userVo.getOfficeId())  // 更改了发布者为 officeId
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)
@@ -109,7 +109,7 @@ public class JWTHelper {
       Algorithm algorithm = Algorithm.HMAC256(userDto.getPassword());
       return JWT.create()
           .withKeyId(userDto.getId())
-          .withIssuer(siteUrl)
+          .withIssuer(userDto.getOfficeId())  // 更改了发布者为 officeId
           .withNotBefore(new Date(System.currentTimeMillis()))
           .withIssuedAt(new Date(System.currentTimeMillis()))
           .withExpiresAt(date)

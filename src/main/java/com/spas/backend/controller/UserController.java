@@ -6,34 +6,22 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
-import com.spas.backend.common.exception.CustomException;
-import com.spas.backend.dto.UserDto;
-import com.spas.backend.entity.Cases;
-import com.spas.backend.entity.Office;
-import com.spas.backend.entity.SuggestionUser;
-import com.spas.backend.entity.User;
-import com.spas.backend.service.CaseService;
-import com.spas.backend.service.OfficeService;
-import com.spas.backend.service.SuggestionUserService;
-import com.spas.backend.service.UserService;
-import com.spas.backend.util.JWTHelper;
+import com.spas.backend.dto.UserRoleUpdateDto;
+import com.spas.backend.entity.*;
+import com.spas.backend.service.*;
 import com.spas.backend.util.PasswordHelper;
-import com.spas.backend.vo.UserOutlineVo;
+import com.spas.backend.vo.UserRoleVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,10 +43,16 @@ public class UserController {
   private UserService userService;
 
   @Resource
+  private UserRoleService userRoleService;
+
+  @Resource
   private OfficeService officeService;
 
   @Resource
   private CaseService caseService;
+
+  @Resource
+  private RoleService roleService;
 
   @Resource
   private SuggestionUserService suggestionUserService;
@@ -92,14 +86,43 @@ public class UserController {
 //  }
 
   /**
-   * 用户管理，修改用户基本信息（除开密码、角色）.
-   * @param userOutlineVo 用户简单信息
+   * 用户管理，修改用户基本信息（除开密码）.
+   * @param userRoleUpdateDto 用户简单信息，包含角色
    */
   @PutMapping("")
-  @ApiOperation("用户管理，修改用户基本信息（除开密码、角色）")
+  @ApiOperation("用户管理，修改用户基本信息包括角色（除开密码）")
   @RequiresRoles(value = {"chief_procurator", "super_admin"}, logical = Logical.OR)
-  public ApiResponse revise(@RequestBody UserOutlineVo userOutlineVo){
-    userService.updateUserByUserOutlineVo(userOutlineVo);
+  public ApiResponse revise(@RequestBody UserRoleUpdateDto userRoleUpdateDto){
+    // 必须有id，并确保其正确性
+    if(userRoleUpdateDto.getUserId().isEmpty()){
+      return new ApiResponse(ApiCode.ILLEGAL_ARGUMENT);
+    }
+    User user = userService.getById(userRoleUpdateDto.getUserId());
+    if(user == null){
+      return new ApiResponse(ApiCode.ILLEGAL_ARGUMENT);
+    }
+    // 要求，用户的信息如果其他没有更改的必须保持准确，不能为空.
+    // 修改用户基本信息
+    userService.updateUserByUserRoleUpdateDto(userRoleUpdateDto);
+    // 是否有角色信息要修改(提交的应该是一个角色id字符串数组) 约定：如果要修改就不为空，如果不修改就为空
+    if(!userRoleUpdateDto.getRoles().isEmpty()){
+      // 不为空，则必然是完整的角色id信息，准备更改角色
+      for(String str : userRoleUpdateDto.getRoles()){
+        // 先验证角色id的正确性
+        Role role = roleService.getById(str);
+        if(role != null){
+          UserRole userRole = new UserRole();
+          userRole.setUseId(userRoleUpdateDto.getUserId());
+          userRole.setRolId(str);
+          userRole.setOfficeId(userRoleUpdateDto.getOfficeId());
+          userRoleService.saveOrUpdate(userRole);
+        }
+        // 否则返回角色信息有问题
+        else{
+          return new ApiResponse(ApiCode.ILLEGAL_ARGUMENT,"角色信息异常，请检查角色是否存在");
+        }
+      }
+    }
     return new ApiResponse();
   }
 
@@ -126,14 +149,14 @@ public class UserController {
     else{
       pageSizeGet = size;
     }
-    IPage<UserOutlineVo> userOutlineVoIPage = userService.selectUserOutlineVoByOfficeIdToPage(
+    IPage<UserRoleVo> userRoleVoIPage = userRoleService.selectRolesByOfficeId(
        new Page<>(current,pageSizeGet),officeId
     );
     // 构造返回页面格式
     HashMap<String,Object> map = new HashMap<>();
-    map.put("count",userOutlineVoIPage.getPages());
-    map.put("current",userOutlineVoIPage.getCurrent());
-    map.put("content",userOutlineVoIPage.getRecords());
+    map.put("count",userRoleVoIPage.getPages());
+    map.put("current",userRoleVoIPage.getCurrent());
+    map.put("content",userRoleVoIPage.getRecords());
     return new ApiResponse(map);
   }
 

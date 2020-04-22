@@ -33,8 +33,6 @@ public class UserRole implements Serializable {
   @TableId(type = IdType.INPUT)
   private String rolId;
 
-  private Integer state;
-
   private LocalDateTime createTime;
 
   @TableField(update = "now()")

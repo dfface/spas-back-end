@@ -30,6 +30,7 @@ public enum ApiCode {
   OFFICE_NOT_FOUND(304,"未注册的检察院"),
   USER_DELETE_FAILED(305, "用户不能被删除，因为还有与之相关的案件等"),
   USER_STATE_FAILED(306,"用户状态更改失败"),
+  USER_HAS_ROLE_FALSE(307,"用户没有此角色，失败"),
   // 6XX 令牌相关码
   ALGORITHM_MISMATCH(601,"令牌中的算法不匹配"),
   SIGNATURE_INVALID(602,"令牌签名无效"),

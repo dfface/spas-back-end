@@ -4,4 +4,14 @@
     <select id="selectUserRolesByUseId" resultType="com.spas.backend.dto.UserRoleDto">
         SELECT ur.rol_id FROM user_role as ur WHERE use_id = #{useId} AND is_deleted = b'0'
     </select>
+    <select id="selectUserRolesByOfficeIdToUserRoleVo" resultType="com.spas.backend.vo.UserRoleVo">
+        SELECT u.id AS user_id , u.name, u.position, u.email, u.state, r.* FROM user AS u
+        LEFT JOIN user_role AS ur
+            ON u.id = ur.use_id
+        LEFT JOIN `role` AS r
+            ON ur.rol_id = r.id
+        WHERE u.office_id = #{officeId}
+            AND u.is_deleted = b'0' OR u.is_deleted = null
+        ORDER BY u.create_time DESC
+    </select>
 </mapper>

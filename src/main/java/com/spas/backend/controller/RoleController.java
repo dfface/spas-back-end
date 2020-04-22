@@ -21,7 +21,7 @@ import javax.annotation.Resource;
  * @since 2020-03-23
  */
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/roles")
 public class RoleController {
 
   @Resource
@@ -32,7 +32,7 @@ public class RoleController {
    * @param officeId 检察院id
    * @return 所有角色
    */
-  @GetMapping("/all/{officeId}")
+  @GetMapping("/{officeId}")
   public ApiResponse selectAll(@PathVariable String officeId){
     return new ApiResponse(ApiCode.OK,roleService.selectAll(officeId));
   }

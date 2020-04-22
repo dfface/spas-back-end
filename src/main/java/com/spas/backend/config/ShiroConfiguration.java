@@ -135,6 +135,8 @@ public class ShiroConfiguration {
     filterChainDefinitionMap.put("/role/all/**", "anon");
     // 登出接口放开
     filterChainDefinitionMap.put("/logout/**", "anon");
+    // 静态资源放开
+    filterChainDefinitionMap.put("/static/**", "anon");
     // 所有请求通过我们自己的JWTFilter
     // 过滤链定义，从上向下顺序执行，一般将放在最为下边
     filterChainDefinitionMap.put("/**", "jwt");
