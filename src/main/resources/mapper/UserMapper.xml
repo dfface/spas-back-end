@@ -22,13 +22,13 @@
              , r.`code` AS role, o.`code` AS permission
         FROM `user` AS u
                  INNER JOIN user_role AS ur
-                            ON u.id = ur.use_id
+                            ON u.id = ur.use_id AND ur.is_deleted = b'0' OR ur.is_deleted = null
                  LEFT JOIN role AS r
-                           ON ur.rol_id = r.id
+                           ON ur.rol_id = r.id AND r.is_deleted = b'0' OR r.is_deleted = null
                  LEFT JOIN role_operation ro
-                           ON r.id = ro.rol_id
+                           ON r.id = ro.rol_id AND ro.is_deleted = b'0' OR ro.is_deleted = null
                  LEFT JOIN operation o
-                           ON ro.ope_id = o.id
+                           ON ro.ope_id = o.id AND o.is_deleted = b'0' OR o.is_deleted = null
         WHERE u.email = #{email}
             AND u.is_deleted = b'0' OR u.is_deleted = null
             AND ur.is_deleted = b'0' OR ur.is_deleted = null
@@ -41,13 +41,13 @@
              , r.`code` AS role, o.`code` AS permission
         FROM `user` AS u
                  INNER JOIN user_role AS ur
-                            ON u.id = ur.use_id
+                            ON u.id = ur.use_id AND ur.is_deleted = b'0' OR ur.is_deleted = null
                  LEFT JOIN role AS r
-                           ON ur.rol_id = r.id
+                           ON ur.rol_id = r.id AND r.is_deleted = b'0' OR r.is_deleted = null
                  LEFT JOIN role_operation ro
-                           ON r.id = ro.rol_id
+                           ON r.id = ro.rol_id AND ro.is_deleted = b'0' OR ro.is_deleted = null
                  LEFT JOIN operation o
-                           ON ro.ope_id = o.id
+                           ON ro.ope_id = o.id AND o.is_deleted = b'0' OR o.is_deleted = null
         WHERE u.id = #{id}
             AND u.is_deleted = b'0' OR u.is_deleted = null
             AND ur.is_deleted = b'0' OR ur.is_deleted = null
@@ -60,13 +60,13 @@
              , r.`code` AS role, o.`code` AS permission
         FROM `user` AS u
                  INNER JOIN user_role AS ur
-                            ON u.id = ur.use_id
+                            ON u.id = ur.use_id AND ur.is_deleted = b'0' OR ur.is_deleted = null
                  LEFT JOIN role AS r
-                           ON ur.rol_id = r.id
+                           ON ur.rol_id = r.id AND r.is_deleted = b'0' OR r.is_deleted = null
                  LEFT JOIN role_operation ro
-                           ON r.id = ro.rol_id
+                           ON r.id = ro.rol_id AND ro.is_deleted = b'0' OR ro.is_deleted = null
                  LEFT JOIN operation o
-                           ON ro.ope_id = o.id
+                           ON ro.ope_id = o.id AND o.is_deleted = b'0' OR o.is_deleted = null
         WHERE u.email = #{email} AND u.office_id = #{officeId}
             AND u.is_deleted = b'0' OR u.is_deleted = null
             AND ur.is_deleted = b'0' OR ur.is_deleted = null
@@ -76,10 +76,10 @@
     </select>
     <update id="updateUserByUserRoleUpdateDto" parameterType="com.spas.backend.dto.UserRoleUpdateDto">
         UPDATE `user` set
-            name = #{userRoleUpdateDto.name},
-            position = #{userRoleUpdateDto.position},
-            email = #{userRoleUpdateDto.email},
-            state = #{userRoleUpdateDto.state}
-        WHERE id = #{userRoleUpdateDto.userId}
+            name = #{name},
+            position = #{position},
+            email = #{email},
+            state = #{state}
+        WHERE id = #{userId}
     </update>
 </mapper>

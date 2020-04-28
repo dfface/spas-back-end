@@ -4,12 +4,40 @@
     <select id="selectUserRolesByUseId" resultType="com.spas.backend.dto.UserRoleDto">
         SELECT ur.rol_id FROM user_role as ur WHERE use_id = #{useId} AND is_deleted = b'0'
     </select>
-    <select id="selectUserRolesByOfficeIdToUserRoleVo" resultType="com.spas.backend.vo.UserRoleVo">
+    <select id="selectUserRolesByOfficeIdToUserRoleVo" resultMap="UserRoleVoResultMap">
         SELECT u.id AS user_id , u.name, u.position, u.email, u.state, r.* FROM user AS u
         LEFT JOIN user_role AS ur
             ON u.id = ur.use_id
+            AND ur.is_deleted = b'0' OR ur.is_deleted = null
         LEFT JOIN `role` AS r
             ON ur.rol_id = r.id
+            AND r.is_deleted = b'0' OR r.is_deleted = null
+        WHERE u.office_id = #{officeId}
+            AND u.is_deleted = b'0' OR u.is_deleted = null
+        ORDER BY u.create_time DESC
+    </select>
+    <resultMap id="UserRoleVoResultMap" type="com.spas.backend.vo.UserRoleVo">
+        <id property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="position" column="position"/>
+        <result property="email" column="email"/>
+        <result property="state" column="state"/>
+        <collection property="roles" ofType="com.spas.backend.entity.Role">
+            <id property="id" column="id"/>
+            <result property="code" column="code"/>
+            <result property="description" column="description"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+            <result property="isDeleted" column="is_deleted"/>
+            <result property="officeId" column="office_id"/>
+        </collection>
+    </resultMap>
+    <select id="selectUserRolesByOfficeIdToUserRoleVoOnce" resultMap="UserRoleVoResultMap">
+        SELECT u.id AS user_id , u.name, u.position, u.email, u.state, r.* FROM user AS u
+        LEFT JOIN user_role AS ur
+                  ON u.id = ur.use_id AND ur.is_deleted = b'0' OR ur.is_deleted = null
+        LEFT JOIN `role` AS r
+                  ON ur.rol_id = r.id AND r.is_deleted = b'0' OR r.is_deleted = null
         WHERE u.office_id = #{officeId}
             AND u.is_deleted = b'0' OR u.is_deleted = null
         ORDER BY u.create_time DESC

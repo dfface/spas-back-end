@@ -1,11 +1,13 @@
 package com.spas.backend.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
+import com.spas.backend.dto.UserRoleDto;
 import com.spas.backend.dto.UserRoleUpdateDto;
 import com.spas.backend.entity.*;
 import com.spas.backend.service.*;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.repository.DeleteQuery;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -89,7 +93,7 @@ public class UserController {
    * 用户管理，修改用户基本信息（除开密码）.
    * @param userRoleUpdateDto 用户简单信息，包含角色
    */
-  @PutMapping("")
+  @PostMapping("")
   @ApiOperation("用户管理，修改用户基本信息包括角色（除开密码）")
   @RequiresRoles(value = {"chief_procurator", "super_admin"}, logical = Logical.OR)
   public ApiResponse revise(@RequestBody UserRoleUpdateDto userRoleUpdateDto){
@@ -105,9 +109,24 @@ public class UserController {
     // 修改用户基本信息
     userService.updateUserByUserRoleUpdateDto(userRoleUpdateDto);
     // 是否有角色信息要修改(提交的应该是一个角色id字符串数组) 约定：如果要修改就不为空，如果不修改就为空
-    if(!userRoleUpdateDto.getRoles().isEmpty()){
+    if(!(userRoleUpdateDto.getRoles().isEmpty() || userRoleUpdateDto.getRoles().contains("no-data"))){
       // 不为空，则必然是完整的角色id信息，准备更改角色
-      for(String str : userRoleUpdateDto.getRoles()){
+      // 先找到所有角色
+      QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
+      userRoleQueryWrapper.eq("use_id",userRoleUpdateDto.getUserId());
+      List<UserRole> userRolesOld = userRoleService.list(userRoleQueryWrapper);   // 原来已经有的所有角色
+      List<String> userRolesOldString = userRolesOld.stream().map(UserRole::getRolId).collect(Collectors.toList());
+      // 现在需要删除的角色
+      List<String> userRolesToDelete = userRolesOld.stream().map(userRole -> userRoleUpdateDto.getRoles().contains(userRole.getRolId())?null:userRole.getRolId()).collect(Collectors.toList());
+      for(String str : userRolesToDelete){
+        Map<String,Object> map = new HashMap<>();
+        map.put("use_id",userRoleUpdateDto.getUserId());
+        map.put("rol_id",str);
+        userRoleService.removeByMap(map);
+      }
+      // 需要添加的角色
+      List<String> userRolesToAdd = userRoleUpdateDto.getRoles().stream().map(userRole -> userRolesOldString.contains(userRole)?null:userRole).collect(Collectors.toList());
+      for(String str : userRolesToAdd){
         // 先验证角色id的正确性
         Role role = roleService.getById(str);
         if(role != null){
@@ -115,6 +134,7 @@ public class UserController {
           userRole.setUseId(userRoleUpdateDto.getUserId());
           userRole.setRolId(str);
           userRole.setOfficeId(userRoleUpdateDto.getOfficeId());
+          userRole.setIsDeleted(false);
           userRoleService.saveOrUpdate(userRole);
         }
         // 否则返回角色信息有问题
@@ -135,6 +155,7 @@ public class UserController {
    */
   @GetMapping("")
   @RequiresRoles(value = {"chief_procurator", "super_admin"}, logical = Logical.OR)
+  @ApiOperation("用户管理，通过officeId获取所有用户分页信息，不包含机密信息")
   public ApiResponse userInfo(@RequestParam String officeId, @RequestParam long current, @RequestParam long size){
     // 先查询 office 是否存在
     Office office = officeService.getById(officeId);
@@ -150,6 +171,17 @@ public class UserController {
     map.put("current",userRoleVoIPage.getCurrent());
     map.put("content",userRoleVoIPage.getRecords());
     return new ApiResponse(map);
+  }
+
+  @GetMapping("/all")
+  @RequiresRoles(value = {"chief_procurator", "super_admin"}, logical = Logical.OR)
+  public ApiResponse userInfoOnce(@RequestParam String officeId){
+    // 先查询 office 是否存在
+    Office office = officeService.getById(officeId);
+    if(office == null){
+      return new ApiResponse(ApiCode.OFFICE_NOT_FOUND);
+    }
+    return new ApiResponse(userRoleService.selectRolesByOfficeId(officeId));
   }
 
   /**

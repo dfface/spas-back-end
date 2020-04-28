@@ -37,6 +37,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -239,6 +240,7 @@ public class HomeController {
    */
   private ApiResponse refreshOrInit(HttpServletRequest request, Boolean b){
     Cookie[] cookies = request.getCookies();
+    log.info("Refresh Token Cookies: " + Arrays.toString(cookies));
     if(cookies == null) {
       return new ApiResponse(ApiCode.IS_LOGGED_FALSE);
     }

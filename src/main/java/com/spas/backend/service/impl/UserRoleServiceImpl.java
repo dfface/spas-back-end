@@ -11,6 +11,7 @@ import com.spas.backend.vo.UserRoleVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -34,5 +35,10 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
   @Override
   public IPage<UserRoleVo> selectRolesByOfficeId(Page<?> page, String officeId) {
     return userRoleMapper.selectUserRolesByOfficeIdToUserRoleVo(page,officeId);
+  }
+
+  @Override
+  public List<UserRoleVo> selectRolesByOfficeId(String officeId) {
+    return userRoleMapper.selectUserRolesByOfficeIdToUserRoleVoOnce(officeId);
   }
 }

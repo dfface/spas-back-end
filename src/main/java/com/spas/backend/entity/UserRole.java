@@ -27,6 +27,9 @@ public class UserRole implements Serializable {
 
   public static final long serialVersionUID = 1L;
 
+  @TableId(type = IdType.ASSIGN_UUID)
+  private String id;
+
   @TableId(type = IdType.INPUT)
   private String useId;
 

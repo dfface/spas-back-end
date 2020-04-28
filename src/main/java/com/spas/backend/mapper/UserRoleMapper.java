@@ -12,4 +12,5 @@ import java.util.List;
 public interface UserRoleMapper extends BaseMapper<UserRole> {
   List<UserRoleDto> selectUserRolesByUseId(String userId);
   IPage<UserRoleVo> selectUserRolesByOfficeIdToUserRoleVo(Page<?> page, String officeId);
+  List<UserRoleVo> selectUserRolesByOfficeIdToUserRoleVoOnce(String officeId);
 }

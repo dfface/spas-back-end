@@ -7,6 +7,8 @@ import com.spas.backend.common.ApiResponse;
 import com.spas.backend.entity.UserRole;
 import com.spas.backend.vo.UserRoleVo;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类.
@@ -25,4 +27,11 @@ public interface UserRoleService extends IService<UserRole> {
    * @return 分页
    */
   IPage<UserRoleVo> selectRolesByOfficeId(Page<?> page, String officeId);
+
+  /**
+   * 通过检察院id查找所有用户及其角色
+   * @param officeId 检察院id
+   * @return 所有列表
+   */
+  List<UserRoleVo> selectRolesByOfficeId(String officeId);
 }
