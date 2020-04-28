@@ -14,6 +14,7 @@ import com.spas.backend.service.RoleService;
 import com.spas.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -84,7 +85,7 @@ public class OfficeController {
    */
   @PutMapping("")
   @ApiOperation("检察院管理，编辑单个检察院信息")
-  public ApiResponse revise(@RequestBody Office office){
+  public ApiResponse revise(@RequestBody @Validated Office office){
     return new ApiResponse(officeService.updateById(office));
   }
 
@@ -95,7 +96,7 @@ public class OfficeController {
    */
   @PostMapping("")
   @ApiOperation("检察院管理，新增检察院")
-  public ApiResponse newOffice(@RequestBody Office office){
+  public ApiResponse newOffice(@RequestBody @Validated Office office){
     ApiResponse apiResponse = new ApiResponse();
     officeService.save(office);
     apiResponse.setMsg(office.getId());
@@ -131,7 +132,7 @@ public class OfficeController {
       // 删除之前要慎重，看旗下还有没有用户，案件
       QueryWrapper<User> queryWrapper = new QueryWrapper<>();
       queryWrapper.eq("office_id",id);
-      if(userService.list(queryWrapper) != null){
+      if(!userService.list(queryWrapper).isEmpty()){
         // 无法删除，有用户
         return new ApiResponse(ApiCode.OFFICE_DELETE_FAILED);
       }

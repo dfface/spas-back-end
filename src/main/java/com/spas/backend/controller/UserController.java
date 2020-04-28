@@ -135,7 +135,7 @@ public class UserController {
           userRole.setRolId(str);
           userRole.setOfficeId(userRoleUpdateDto.getOfficeId());
           userRole.setIsDeleted(false);
-          userRoleService.saveOrUpdate(userRole);
+          userRoleService.save(userRole);
         }
         // 否则返回角色信息有问题
         else{

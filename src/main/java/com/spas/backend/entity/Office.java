@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * <p>
  * 检察院实体.
@@ -30,6 +32,7 @@ public class Office implements Serializable {
   @TableId(type = IdType.ASSIGN_UUID)
   private String id;
 
+  @NotBlank
   private String name;
 
   private String url;

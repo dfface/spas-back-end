@@ -17,8 +17,8 @@ class BackEndApplicationTests {
 //  @Autowired
 //  ModelMapper modelMapper;
 //
-  @Autowired
-  OfficeMapper officeMapper;
+//  @Autowired
+//  OfficeMapper officeMapper;
 //
 //  @Resource
 //  OperationMapper operationMapper;
@@ -34,19 +34,18 @@ class BackEndApplicationTests {
 //
 //  @Autowired
 //  UserRoleMapper userRoleMapper;
-
-  @Test
-  void contextLoads() {
-  }
+//
+//  @Test
+//  void contextLoads() {
+//  }
 
 //  @Test
 //  void addUser() {
 //    User user = new User();
-//    user.setName("李四");
-//    user.setPosition("国土资源局局长");
-//    user.setEmail("handy1998@qq.com");
-//    user.setOfficeId("a887c5eb331721807d88f4e9c40e2dcd");
-//    user.setDepartmentId("de20808201c66109f3a3202d05e1f795");
+//    user.setName("刘六");
+//    user.setPosition("平台管理员");
+//    user.setEmail("1106741606@qq.com");
+//    user.setOfficeId("664bfa13ea5ee06c27e0e5c74ced6ec2");
 //    user.setPassword("123456");
 //    UserDto userDto = new UserDto();
 //    modelMapper.map(user,userDto);
@@ -54,13 +53,13 @@ class BackEndApplicationTests {
 //  }
 //
 //  @Test
-  void addOffice() {
-    Office office = new Office();
-    office.setName("扬州市人民检察院");
-    office.setUrl("http://yc.hbjc.gov.cn/");
-    officeMapper.insert(office);
-    System.out.println("id:" + office.getId());
-  }
+//  void addOffice() {
+//    Office office = new Office();
+//    office.setName("检察建议流程辅助办案系统");
+//    office.setUrl("#");
+//    officeMapper.insert(office);
+//    System.out.println("id:" + office.getId());
+//  }
 //
 ////  @Test
 //  void addDepartment() {
@@ -71,22 +70,22 @@ class BackEndApplicationTests {
 //    System.out.println("id:" + department.getId());
 //  }
 
-////  @Test
+//  @Test
 //  void addRole() {
 //    Role role = new Role();
-//    role.setCode("administrative_personnel");
-//    role.setDescription("行政机关人员");
-//    role.setOfficeId("a887c5eb331721807d88f4e9c40e2dcd");
+//    role.setCode("super_admin");
+//    role.setDescription("管理员");
+//    role.setOfficeId("664bfa13ea5ee06c27e0e5c74ced6ec2");
 //    roleMapper.insert(role);
 //    System.out.println("id:" + role.getId());
 //  }
 
-////  @Test
+//  @Test
 //  void addUserRole() {
 //    UserRole userRole = new UserRole();
-//    userRole.setUseId("b7a894040681bc2c56c48cea3a5a7ab4");
-//    userRole.setRolId("6aae396f6af4d9bdf5d7683c82101d82");
-//    userRole.setOfficeId("a887c5eb331721807d88f4e9c40e2dcd");
+//    userRole.setUseId("a6c5c7f38ed76639c50de354aa1eef83");
+//    userRole.setRolId("5783e0fa99adcb4d27b8f66aedf7c40f");
+//    userRole.setOfficeId("664bfa13ea5ee06c27e0e5c74ced6ec2");
 //    userRoleMapper.insert(userRole);
 //  }
 //
