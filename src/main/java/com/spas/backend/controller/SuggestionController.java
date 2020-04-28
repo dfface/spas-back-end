@@ -51,7 +51,6 @@ public class SuggestionController {
   @Resource
   private OfficeService officeService;
 
-
   @Resource
   private ModelMapper modelMapper;
 
@@ -68,6 +67,10 @@ public class SuggestionController {
   @ApiOperation("新建检察建议")
   public ApiResponse newSuggestion(@RequestBody SuggestionDto suggestionDto){
     // 参数校验
+    // 保存
+    Suggestion suggestion = new Suggestion();
+    modelMapper.map(suggestionDto,suggestion);
+    suggestionService.newSuggestion(suggestion);
     // 发送邮件
     String[] email = suggestionDto.getEmail();
     log.info("email: " + Arrays.toString(email));
@@ -88,10 +91,6 @@ public class SuggestionController {
       valueMap.put("createTime", localDateTime.format(formatter));
       emailHelper.sendSimpleMail(valueMap,"suggestionSendTemplate");
     }
-    // 保存
-    Suggestion suggestion = new Suggestion();
-    modelMapper.map(suggestionDto,suggestion);
-    suggestionService.newSuggestion(suggestion);
     modelMapper.map(suggestion,suggestionDto);
     log.debug(suggestionDto.toString());
     return new ApiResponse(ApiCode.OK, suggestionDto);

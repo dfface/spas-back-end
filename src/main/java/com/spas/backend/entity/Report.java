@@ -38,7 +38,7 @@ public class Report implements Serializable {
   private String judge;
 
   @ApiModelProperty(value = "针对内容评分")
-  private String score;
+  private Double score;
 
   private Integer state;
 

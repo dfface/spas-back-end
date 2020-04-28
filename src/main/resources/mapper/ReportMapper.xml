@@ -4,17 +4,19 @@
     <select id="selectReportBySuggestionCreatedByProcurator" resultType="com.spas.backend.entity.Report">
         SELECT r.* FROM report r
         LEFT JOIN suggestion s
-        ON r.suggestion_id = s.id
+        ON r.suggestion_id = s.id AND s.is_deleted = b'0' OR s.is_deleted = null
         WHERE s.creator_id = #{procuratorId} AND s.state = #{state}
         AND r.is_deleted = b'0' OR r.is_deleted = null
         AND s.is_deleted = b'0' OR s.is_deleted = null
+        ORDER BY `update_time` DESC
     </select>
     <select id="selectReportBySuggestionEvaluatedByProcurator" resultType="com.spas.backend.entity.Report">
         SELECT r.* FROM report r
         LEFT JOIN suggestion s
-        ON r.suggestion_id = s.id
+        ON r.suggestion_id = s.id AND s.is_deleted = b'0' OR s.is_deleted = null
         WHERE s.creator_id = #{procuratorId} AND r.state = 2
             AND r.is_deleted = b'0' OR r.is_deleted = null
             AND s.is_deleted = b'0' OR s.is_deleted = null
+        ORDER BY `update_time` DESC
     </select>
 </mapper>

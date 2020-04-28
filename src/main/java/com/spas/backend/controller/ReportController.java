@@ -5,16 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mchange.lang.DoubleUtils;
 import com.spas.backend.common.ApiCode;
 import com.spas.backend.common.ApiResponse;
 import com.spas.backend.dto.ReportDto;
 import com.spas.backend.dto.ReportJudgeDto;
+import com.spas.backend.entity.Cases;
 import com.spas.backend.entity.Report;
 import com.spas.backend.entity.Suggestion;
-import com.spas.backend.service.OfficeService;
-import com.spas.backend.service.ReportService;
-import com.spas.backend.service.SuggestionService;
-import com.spas.backend.service.UserService;
+import com.spas.backend.service.*;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -45,6 +45,9 @@ public class ReportController {
 
   @Resource
   private OfficeService officeService;
+
+  @Resource
+  private CaseService caseService;
 
   @Resource
   private SuggestionService suggestionService;
@@ -116,6 +119,9 @@ public class ReportController {
         .set("state",2);  // 表示已经评价过
     reportService.update(updateWrapper);
     Report report = reportService.getById(reportJudgeDto.getId());
+    // 找到相关的案件
+    String caseId = report.getCaseId();
+    Cases cases = caseService.getById(caseId);
     UpdateWrapper<Suggestion> suggestionUpdateWrapper = new UpdateWrapper<>();
     // 更改检察建议状态
     if(reportJudgeDto.getNextState() == 3) {  // 等待新一轮报告
@@ -125,10 +131,65 @@ public class ReportController {
     else if(reportJudgeDto.getNextState() == 2){
       suggestionUpdateWrapper.eq("id",report.getSuggestionId())
           .set("state",5);  // 表示已经回复过，准备起诉
+      // 更新案件信息
+      cases.setState(5);
+      caseService.updateById(cases);
+      // 更新分数
+      // 获取整改次数
+      // 获取检察建议id
+      String suggestionId = report.getSuggestionId();
+      QueryWrapper<Report> reportQueryWrapper = new QueryWrapper<>();
+      reportQueryWrapper.eq("suggestion_id",suggestionId);
+      List<Report> reportList = reportService.list(reportQueryWrapper);
+      int times = reportList.size();
+      double timesScore;
+      if(times > 20){
+        timesScore = 0.0;
+      }
+      else{
+        timesScore = (20 - times) / 20.0 * 5; // 最多20次，超过20为0，最后还乘以5，表示五分制
+      }
+      // 获取整改报告平均分，五分制
+      double average = reportList.stream()
+          .map(Report::getScore)
+          .collect(Collectors.toList()).stream()
+          .reduce(0.0, Double::sum)/times;
+      // 此时显然是准备起诉（那么久没有加分，仍然是五分制）
+      int prosecute = 0;
+      // 计算分数
+      double finalScore = 0.73*average + 0.19*timesScore + 0.08*prosecute;
+      suggestionUpdateWrapper.set("score",finalScore);
     }
     else if(reportJudgeDto.getNextState() == 1){
       suggestionUpdateWrapper.eq("id",report.getSuggestionId())
           .set("state",4);  // 表示整改完成
+      cases.setState(4);
+      caseService.updateById(cases);
+      // 更新分数
+      // 获取整改次数
+      // 获取检察建议id
+      String suggestionId = report.getSuggestionId();
+      QueryWrapper<Report> reportQueryWrapper = new QueryWrapper<>();
+      reportQueryWrapper.eq("suggestion_id",suggestionId);
+      List<Report> reportList = reportService.list(reportQueryWrapper);
+      int times = reportList.size();
+      double timesScore;
+      if(times > 20){
+        timesScore = 0.0;
+      }
+      else{
+        timesScore = (20 - times) / 20.0 * 5; // 最多20次，超过20为0，最后还乘以5，表示五分制
+      }
+      // 获取整改报告平均分，五分制
+      double average = reportList.stream()
+          .map(Report::getScore)
+          .collect(Collectors.toList()).stream()
+          .reduce(0.0, Double::sum)/times;
+      // 此时显然是没有准备起诉（那么有加分，仍然是五分制）
+      int prosecute = 5;
+      // 计算分数
+      double finalScore = 0.73*average + 0.19*timesScore + 0.08*prosecute;
+      suggestionUpdateWrapper.set("score",finalScore);
     }
     suggestionService.update(suggestionUpdateWrapper);
     return new ApiResponse(ApiCode.OK);
