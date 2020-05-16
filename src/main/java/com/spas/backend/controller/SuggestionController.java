@@ -80,10 +80,10 @@ public class SuggestionController {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
       valueMap.put("to", email);
       valueMap.put("title","检察建议送达通知");
-      valueMap.put("government",suggestionDto.getSupervisedName());
-      valueMap.put("suggestion",suggestionDto.getContent());
-      valueMap.put("deadline",suggestionDto.getDeadline().format(formatter));
-      valueMap.put("secret",suggestionDto.getId());  // 密码应是检察建议的id
+      valueMap.put("government",suggestion.getSupervisedName());
+      valueMap.put("suggestion",suggestion.getContent());
+      valueMap.put("deadline",suggestion.getDeadline().format(formatter));
+      valueMap.put("secret",suggestion.getId());  // 密码应是检察建议的id
       valueMap.put("url","https://www.spas.com");  // 待定
       // 查询检察院名字
       Office office = officeService.select(suggestionDto.getOfficeId());
