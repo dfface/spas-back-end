@@ -133,7 +133,7 @@ public class ShiroConfiguration {
     // 注册接口放开
     filterChainDefinitionMap.put("/offices/all", "anon");
     filterChainDefinitionMap.put("/register", "anon");
-    filterChainDefinitionMap.put("/roles/all/**", "anon");
+    filterChainDefinitionMap.put("/roles/**", "anon");
     // 登出接口放开
     filterChainDefinitionMap.put("/logout/**", "anon");
     // 静态资源放开
