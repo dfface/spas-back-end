@@ -100,7 +100,7 @@ public class HomeController {
    * @param loginVo 接受JSON字符串，包含 email 和 password
    * @return 三个令牌
    */
-  @PostMapping("login")
+  @PostMapping("/login")
   public ApiResponse login(HttpServletRequest request, HttpServletResponse response, @RequestBody @Validated LoginVo loginVo){
     String email = loginVo.getEmail();
     String password = loginVo.getPassword();
@@ -164,7 +164,7 @@ public class HomeController {
     }
   }
 
-  @GetMapping("error")
+  @GetMapping("/error")
   public Object unauthc() {
     return "Here is Unauthc page";
   }
@@ -183,13 +183,13 @@ public class HomeController {
 //    return "SUCCESS";
 //  }
 
-  @GetMapping("refresh")
+  @GetMapping("/refresh")
   @ApiOperation("通过刷新令牌获取访问令牌")
   public ApiResponse refresh(HttpServletRequest request) {
     return refreshOrInit(request,true);
   }
 
-  @GetMapping("init")
+  @GetMapping("/init")
   @ApiOperation("初始化阶段，获取访问和ID令牌")
   public ApiResponse init(HttpServletRequest request){
     return refreshOrInit(request,false);
@@ -200,7 +200,7 @@ public class HomeController {
    * @param request 请求中通过 Cookie 获取 id
    * @return 有且正确则已登录，否则未登录
    */
-  @GetMapping("isLogged")
+  @GetMapping("/isLogged")
   @ApiOperation("服务端判断用户是否登录：redis 中是否有值")
   public ApiResponse isLogged(HttpServletRequest request) {
     Cookie[] cookies = request.getCookies();
